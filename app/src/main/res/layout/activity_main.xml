@@ -15,10 +15,17 @@
         tools:layout_editor_absoluteX="5dp"
         tools:layout_editor_absoluteY="5dp">
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Claer memroy beforce start to prevent out of memory error" />
+
         <Button
             android:id="@+id/ButtonSelectFile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:onClick="SelectFile"
             android:text="Select file" />
 

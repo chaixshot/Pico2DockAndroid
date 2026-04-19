@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
                         DecompileOptions decompiler = new DecompileOptions();
                         decompiler.inputFile = apkFile;
                         decompiler.outputFile = dirWorker;
+                        decompiler.loadDex = 1;
+                        decompiler.commentLevel = "off";
                         decompiler.runCommand();
                     } catch (Exception e) {
                         ChangeStateText(e.toString());
