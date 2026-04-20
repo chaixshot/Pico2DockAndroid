@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Utils {
-    public static File GetKeystoreFile(Context context){
+    public static File GetKeystoreFile(Context context) {
         File keystore;
 
         Resources resources = context.getResources();
@@ -31,5 +31,22 @@ public class Utils {
 //            e.printStackTrace();
             return null;
         }
+    }
+
+    public static void CleanupDir(String path) {
+        File file = new File(path);
+
+        if (file.isDirectory()) {
+            String[] children = file.list();
+            for (String child : children) {
+                CleanupDir(path + "/" + child);
+            }
+        }
+        file.delete();
+    }
+
+    public static void CleanupTempDir(){
+        CleanupDir("storage/emulated/0/Pico2Dock/Worker");
+        CleanupDir("storage/emulated/0/Pico2Dock/Unsign");
     }
 }
