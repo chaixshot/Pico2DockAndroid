@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 public class PermissionHelper {
     static CardView WarningCard;
+
     public static void CheckPermission(Activity context) {
         WarningCard = (CardView) context.findViewById(R.id.CardPermissionWarning);
 

@@ -1,9 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Pico2Dock" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.Pico2Dock" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorPrimary">#2ffe02</item>
+        <item name="colorAccent">#2ffe02</item>
     </style>
-
-    <style name="Theme.Pico2Dock" parent="Base.Theme.Pico2Dock" />
 </resources>

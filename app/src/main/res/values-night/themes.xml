@@ -1,7 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Pico2Dock" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Pico2Dock" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorPrimary">#2ffe02</item>
+        <item name="colorAccent">#2ffe02</item>
     </style>
 </resources>
