@@ -114,12 +114,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSelectedFilePaths(String[] files) {
                 if (files.length > 0) {
+                    APKFiles = files;
+
                     // File list view
                     ListAdapter myAdapter = new ArrayAdapter<String>(_this, android.R.layout.simple_list_item_1, files);
                     ListViewFile.setAdapter(myAdapter);
-                    TextViewSelectHint.setVisibility(View.GONE);
 
-                    APKFiles = files;
+                    TextViewSelectHint.setVisibility(View.GONE);
+                    ButtonClear.setEnabled(true);
                 }
             }
         });
@@ -144,14 +146,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ClearFileList(View view) {
-        String[] files = new String[]{};
+        String[] empty = new String[]{};
+
+        APKFiles = empty;
+
         // File list view
-        ListAdapter myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, files);
-
+        ListAdapter myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, empty);
         ListViewFile.setAdapter(myAdapter);
-        TextViewSelectHint.setVisibility(VISIBLE);
 
-        APKFiles = files;
+        TextViewSelectHint.setVisibility(VISIBLE);
+        ButtonClear.setEnabled(false);
     }
 
     public void CancelMainTask(View view) {
@@ -166,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         boolean isError = false;
 
         protected String doInBackground(String... APKFiles) {
-            ChangeStateText("### Current Status\nCleaning...");
+            ChangeStateText("### Current Status\nCleaning directory...");
             Utils.CleanupTempDir();
 
             for (String file : APKFiles) {
@@ -208,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         DecompileOptions decompiler = new DecompileOptions();
                         decompiler.inputFile = apkFile;
                         decompiler.outputFile = dirWorker;
-                        decompiler.loadDex = 1; // 1.4.2++
+//                        decompiler.loadDex = 1; // 1.4.2++
                         decompiler.runCommand();
                     } catch (Exception e) {
                         ChangeStateText(e.toString());
@@ -406,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //?? -------------------- [[ Cleaning temp ]] --------------------
-                    ChangeStateText("### Current Status\nCleaning...");
+                    ChangeStateText("### Current Status\nCleaning directory...");
                     Utils.CleanupTempDir();
                 } else {
                     ChangeStateText("Can't access file \"" + file + "\"");
@@ -434,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
             ButtonCancel.setEnabled(false);
             ButtonClear.setEnabled(true);
 
-            ChangeStateText("### Current Status\nCleaning...");
+            ChangeStateText("### Current Status\nCleaning directory...");
             Utils.CleanupTempDir();
 
             ChangeStateText("### Process has been terminated.");
