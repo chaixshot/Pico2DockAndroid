@@ -41,12 +41,12 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.cardview)
-    implementation(files("../libs/APKEditor-1.4.8.jar"))
+    implementation(files("../libs/APKEditor-1.4.3.jar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
     implementation("com.github.TutorialsAndroid:FilePicker:v9.0.1")
     implementation("io.noties.markwon:core:4.6.2")
-    implementation("com.github.timscriptov:apksigner:1.2.0")
+    implementation("com.github.patrickfav:uber-apk-signer:v1.3.0")
 }

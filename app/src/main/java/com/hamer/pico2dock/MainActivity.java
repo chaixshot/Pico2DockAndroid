@@ -20,11 +20,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.apksigner.ApkSignerTool;
 import com.developer.filepicker.controller.DialogSelectionListener;
 import com.developer.filepicker.model.DialogConfigs;
 import com.developer.filepicker.model.DialogProperties;
 import com.developer.filepicker.view.FilePickerDialog;
-import com.mcal.apksigner.ApkSigner;
 import com.reandroid.apkeditor.compile.BuildOptions;
 import com.reandroid.apkeditor.decompile.DecompileOptions;
 
@@ -289,13 +289,37 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         ChangeStateText("### Current Status\nSigning **" + apkName + "**...");
 
-                        final ApkSigner signer = new ApkSigner(dirApkUnsing, dirApkOut);
-                        signer.setUseDefaultSignatureVersion(false);
-                        signer.setV1SigningEnabled(true);
-                        signer.setV2SigningEnabled(true);
-                        signer.setV3SigningEnabled(true);
-                        signer.setV4SigningEnabled(false);
-                        signer.signRelease(keystore, "forpico2dock", "H@mer", "forpico2dock");
+//                        final ApkSigner signer = new ApkSigner(dirApkUnsing, dirApkOut);
+//                        signer.setUseDefaultSignatureVersion(false);
+//                        signer.setV1SigningEnabled(true);
+//                        signer.setV2SigningEnabled(true);
+//                        signer.setV3SigningEnabled(true);
+//                        signer.setV4SigningEnabled(false);
+//                        signer.signRelease(keystore, "forpico2dock", "H@mer", "forpico2dock");
+
+//                        Arg parsedArg = CLIParser.parse(asArgArray("--help"));
+//                        Commandline.translateCommandline(cmd);
+                        String[] arg = new String[]{
+                                "sign",
+
+                                "--ks",
+                                keystore.getPath(),
+
+                                "--key-pass",
+                                "pass:forpico2dock",
+
+                                "--ks-pass",
+                                "pass:forpico2dock",
+
+                                "--out",
+                                dirApkOut.getPath(),
+
+                                "--in",
+                                dirApkUnsing.getPath(),
+                        };
+//                        arg.
+                        ApkSignerTool.main(arg);
+
                     } catch (Exception e) {
                         ChangeStateText(e.toString());
                         isError = true;
