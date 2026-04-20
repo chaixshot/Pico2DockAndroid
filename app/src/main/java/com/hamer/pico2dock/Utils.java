@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 public class Utils {
     public static File GetKeystoreFile(Context context) {
@@ -48,5 +49,15 @@ public class Utils {
     public static void CleanupTempDir(){
         CleanupDir("storage/emulated/0/Pico2Dock/Worker");
         CleanupDir("storage/emulated/0/Pico2Dock/Unsign");
+    }
+
+    public static String generateString(int length) {
+        final String valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder res = new StringBuilder();
+        Random rnd = new Random();
+        while (length-- > 0) {
+            res.append(valid.charAt(rnd.nextInt(valid.length())));
+        }
+        return res.toString();
     }
 }

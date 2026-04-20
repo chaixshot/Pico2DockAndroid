@@ -250,14 +250,14 @@
                             android:orientation="horizontal">
 
                             <CheckBox
-                                android:id="@+id/checkBox"
+                                android:id="@+id/CheckboxRePackage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="New package name"
                                 android:tooltipText="Attempting to auto-rename the package allows to install app alongside the normal version.\n\nPackage is more likey not to work, depending the app is writtcn and its protection." />
 
                             <CheckBox
-                                android:id="@+id/checkBox2"
+                                android:id="@+id/CheckboxRePackageAdv"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="5dp"
@@ -293,11 +293,11 @@
                                 android:tooltipText="Add text to the end of the original app name. \n\nLeave it black to do nothing. \n\nNot working for an app that can change its name through its settings." />
 
                             <CheckBox
-                                android:id="@+id/checkBox2"
+                                android:id="@+id/CheckboxRePackageAdv"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="5dp"
-                                android:text="CheckBox"
+                                android:text="Rename"
                                 android:tooltipText="Change the entire app name instead of adding text after." />
                         </LinearLayout>
 

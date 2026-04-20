@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -42,6 +43,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import io.noties.markwon.Markwon;
 
@@ -57,8 +63,12 @@ public class MainActivity extends AppCompatActivity {
     ListView ListViewFile;
     TextView TextViewSelectHint;
     Switch SwtichHideDock;
+    CheckBox CheckboxRePackage;
+    CheckBox CheckboxRePackageAdv;
 
     boolean IsHideDock = false;
+    boolean IsRePackage = false;
+    boolean IsRePackageAdv = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         TextViewSelectHint = (TextView) findViewById(R.id.TextFileSelectHint);
         SwtichHideDock = (Switch) findViewById(R.id.SwitchHideDock);
 
-        IsHideDock = SwtichHideDock.isChecked();
+        CheckboxRePackage = (CheckBox) findViewById(R.id.CheckboxRePackage);
+        CheckboxRePackageAdv = (CheckBox) findViewById(R.id.CheckboxRePackageAdv);
     }
 
     public void SelectFile(View view) {
@@ -121,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
             ButtonStart.setEnabled(false);
             ButtonCancel.setEnabled(true);
             ButtonClear.setEnabled(false);
+
+            IsHideDock = SwtichHideDock.isChecked();
+            IsRePackage = CheckboxRePackage.isChecked();
+            IsRePackageAdv = CheckboxRePackageAdv.isChecked();
 
             MainTask = new Worker().execute(APKFiles);
         } else {
@@ -258,6 +273,83 @@ public class MainActivity extends AppCompatActivity {
                             metaData3.setAttributeNS(androidSpace, "android:name", "pico_permission_dim_show");
                             metaData3.setAttributeNS(androidSpace, "android:value", "false");
                             application.appendChild(metaData3);
+                        }
+
+                        // Random package name
+                        if (IsRePackage) {
+                            String packageName = xmlRoot.getAttribute("package");
+                            String ranPrefix = Utils.generateString(6);
+                            String newPackageName = packageName + ranPrefix;
+
+                            // Change package name
+                            xmlRoot.setAttribute("package", newPackageName);
+
+                            if (IsRePackageAdv) {
+                                String sharedUserId = xmlRoot.getAttributeNS(androidSpace, "sharedUserId");
+                                if (sharedUserId != null && !sharedUserId.isEmpty()) {
+                                    xmlRoot.setAttributeNS(androidSpace, "sharedUserId", sharedUserId.replace(packageName, newPackageName));
+                                }
+                            }
+
+                            NodeList applicationNodes = xmlRoot.getElementsByTagName("application");
+                            for (int i = 0; i < applicationNodes.getLength(); i++) {
+                                Element application = (Element) applicationNodes.item(i);
+                                NodeList providers = application.getElementsByTagName("provider");
+                                for (int j = 0; j < providers.getLength(); j++) {
+                                    Element provider = (Element) providers.item(j);
+                                    String value = provider.getAttributeNS(androidSpace, "authorities");
+                                    if (value.contains(packageName)) {
+                                        provider.setAttributeNS(androidSpace, "authorities", value.replace(packageName, newPackageName));
+                                    } else {
+                                        provider.setAttributeNS(androidSpace, "authorities", value + ranPrefix);
+                                    }
+                                }
+                            }
+
+                            // Change permission
+                            {
+                                XPathFactory xpathFactory = XPathFactory.newInstance();
+                                XPath xpath = xpathFactory.newXPath();
+                                try {
+                                    XPathExpression permissionExpr = xpath.compile("//permission");
+                                    NodeList permissionsList = (NodeList) permissionExpr.evaluate(xmlRoot, XPathConstants.NODESET);
+                                    for (int i = 0; i < permissionsList.getLength(); i++) {
+                                        Element permission = (Element) permissionsList.item(i);
+                                        String value = permission.getAttributeNS(androidSpace, "name");
+                                        if (IsRePackageAdv) {
+                                            permission.setAttributeNS(androidSpace, "name", value.replace(packageName, newPackageName));
+                                        } else {
+                                            permission.setAttributeNS(androidSpace, "name", value + ranPrefix);
+                                        }
+                                    }
+
+                                    XPathExpression usesPermissionExpr = xpath.compile("//uses-permission");
+                                    NodeList usesPermissionsList = (NodeList) usesPermissionExpr.evaluate(xmlRoot, XPathConstants.NODESET);
+                                    for (int i = 0; i < usesPermissionsList.getLength(); i++) {
+                                        Element permission = (Element) usesPermissionsList.item(i);
+                                        String value = permission.getAttributeNS(androidSpace, "name");
+                                        if (IsRePackageAdv) {
+                                            permission.setAttributeNS(androidSpace, "name", value.replace(packageName, newPackageName));
+                                        } else {
+                                            permission.setAttributeNS(androidSpace, "name", value + ranPrefix);
+                                        }
+                                    }
+
+                                    if (IsRePackageAdv) {
+                                        XPathExpression activityAliasExpr = xpath.compile("//activity-alias");
+                                        NodeList activityAliasList = (NodeList) activityAliasExpr.evaluate(xmlRoot, XPathConstants.NODESET);
+                                        for (int i = 0; i < activityAliasList.getLength(); i++) {
+                                            Element activityAlias = (Element) activityAliasList.item(i);
+                                            String value = activityAlias.getAttributeNS(androidSpace, "name");
+                                            activityAlias.setAttributeNS(androidSpace, "name", value.replace(packageName, newPackageName));
+                                        }
+                                    }
+                                } catch (XPathExpressionException e) {
+                                    ChangeStateText(e.toString());
+                                    isError = true;
+                                    continue;
+                                }
+                            }
                         }
 
                         // Save changes to file
