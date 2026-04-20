@@ -1,8 +1,11 @@
 package com.hamer.pico2dock;
 
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -79,15 +82,20 @@ public class MainActivity extends AppCompatActivity {
         dialog.setDialogSelectionListener(new DialogSelectionListener() {
             @Override
             public void onSelectedFilePaths(String[] files) {
-                // File list view
-                ListAdapter myAdapter = new ArrayAdapter<String>(_this, android.R.layout.simple_list_item_1, files);
-                ListView fileList = (ListView) findViewById(R.id.ListViewFiles);
-                fileList.setAdapter(myAdapter);
+                if (files.length > 0) {
+                    // File list view
+                    ListAdapter myAdapter = new ArrayAdapter<String>(_this, android.R.layout.simple_list_item_1, files);
+                    ListView fileList = (ListView) findViewById(R.id.ListViewFiles);
+                    fileList.setAdapter(myAdapter);
 
-                APKFiles = files;
+                    APKFiles = files;
+
+                    TextView hintText = (TextView)findViewById(R.id.TextFileSelectHint);
+
+                    hintText.setVisibility(View.GONE);
+                }
             }
         });
-
 
         dialog.show();
     }
@@ -101,6 +109,20 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ChangeStateText("### ERROR\nThere is no file in process.");
         }
+    }
+
+    public void ClearFileList(View view){
+        String[] files = new String[]{};
+        // File list view
+        ListAdapter myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, files);
+        ListView fileList = (ListView) findViewById(R.id.ListViewFiles);
+        fileList.setAdapter(myAdapter);
+
+        APKFiles = files;
+
+        TextView hintText = (TextView)findViewById(R.id.TextFileSelectHint);
+
+        hintText.setVisibility(VISIBLE);
     }
 
     private class MainTask extends AsyncTask<String, String, String> {
