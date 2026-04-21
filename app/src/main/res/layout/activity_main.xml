@@ -14,7 +14,8 @@
         android:layout_height="fill_parent"
         app:cardBackgroundColor="#ff292929"
         app:cardCornerRadius="32dp"
-        app:contentPadding="5dp">
+        app:contentPadding="5dp"
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,8 +66,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Convert the APK app from Floating to Dashboard Dock for Pico 4, alike File Manager."
-                        android:textSize="16sp" />
+                        android:text="Convert the APK app from Floating to Dashboard Dock for Pico 4, alike File Manager." />
 
                     <TextView
                         android:id="@+id/textView5"
@@ -122,7 +122,7 @@
                             <Button
                                 android:id="@+id/button"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="40dp"
                                 android:layout_marginLeft="10dp"
                                 android:onClick="OpenGithubPage"
                                 android:paddingTop="0dp"
@@ -257,8 +257,8 @@
                                 android:id="@+id/CheckboxRePackage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-7dp"
-                                android:layout_marginBottom="-7dp"
+                                android:layout_marginTop="-5dp"
+                                android:layout_marginBottom="-5dp"
                                 android:text="New package name"
                                 android:tooltipText="Attempting to auto-rename the package allows to install app alongside the normal version.\n\nPackage is more likey not to work, depending the app is writtcn and its protection." />
 
@@ -266,8 +266,8 @@
                                 android:id="@+id/CheckboxRePackageAdv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-7dp"
-                                android:layout_marginBottom="-7dp"
+                                android:layout_marginTop="-5dp"
+                                android:layout_marginBottom="-5dp"
                                 android:text="Advance mode"
                                 android:tooltipText="Rename the package name in advanced mode if normal is not working." />
                         </LinearLayout>
@@ -291,8 +291,8 @@
                                 android:id="@+id/editTextText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
-                                android:layout_marginBottom="-5dp"
+                                android:layout_marginTop="-4dp"
+                                android:layout_marginBottom="-4dp"
                                 android:layout_weight="1"
                                 android:ems="10"
                                 android:hint="After app name"
@@ -304,8 +304,8 @@
                                 android:id="@+id/CheckboxRePackageAdv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
-                                android:layout_marginBottom="-5dp"
+                                android:layout_marginTop="-3dp"
+                                android:layout_marginBottom="-3dp"
                                 android:text="Rename"
                                 android:tooltipText="Change the entire app name instead of adding text after." />
                         </LinearLayout>
@@ -320,7 +320,7 @@
                 android:id="@+id/CardStatus"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 app:cardCornerRadius="32dp">
 
                 <LinearLayout
