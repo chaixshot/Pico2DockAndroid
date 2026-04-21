@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     Switch SwtichHideDock;
     CheckBox CheckboxRePackage;
     CheckBox CheckboxRePackageAdv;
+    ProgressBar StatusProgressBar;
+    TextView PercentText;
 
     boolean IsHideDock = false;
     boolean IsRePackage = false;
@@ -89,7 +92,12 @@ public class MainActivity extends AppCompatActivity {
         SwtichHideDock = (Switch) findViewById(R.id.SwitchHideDock);
         CheckboxRePackage = (CheckBox) findViewById(R.id.CheckboxRePackage);
         CheckboxRePackageAdv = (CheckBox) findViewById(R.id.CheckboxRePackageAdv);
+        StatusProgressBar = (ProgressBar) findViewById(R.id.StatusProgressBar);
+        PercentText = (TextView) findViewById(R.id.PercentText);
+
+        ResetAppearance();
         ChangeButtonState();
+
         PermissionHelper.CheckPermission();
     }
 
@@ -154,11 +162,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void CancelMainTask(View view) {
-        ChangeStateText("### Current Status\n---\nCanceling process please wait...");
+        if (!MainTask.isCancelled()) {
+            ChangeStateText("### Current Status\n---\nCanceling process please wait...");
 
-        MainTask.cancel(true);
+            MainTask.cancel(true);
 
-        view.setEnabled(false);
+            view.setEnabled(false);
+        }
     }
 
     private class Worker extends AsyncTask<String, String, String> {
@@ -205,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                     continue;
                 }
 
-                // Check if output apk file exist
+                //?? -------------------- [[ Rename ]] --------------------
                 if (dirApkOut.exists()) {
                     int count = 1;
                     while (dirApkOut.exists()) {
@@ -220,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...");
+                    IncressProgressBar(apkFiles.length, 1);
+
                     DecompileOptions options = new DecompileOptions();
                     options.inputFile = apkFile;
                     options.outputFile = dirWorker;
@@ -231,11 +243,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = error.toString();
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 4);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 4);
 
                     continue;
                 }
@@ -245,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nModifing **AndroidManifest.xml** of **" + apkName + "**...");
+                    IncressProgressBar(apkFiles.length, 1);
 
                     String androidSpace = "http://schemas.android.com/apk/res/android";
 
@@ -389,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = error.toString();
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 3);
 
                     continue;
                 }
@@ -397,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...");
+                    IncressProgressBar(apkFiles.length, 1);
 
                     BuildOptions options = new BuildOptions();
 
@@ -410,11 +427,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = error.toString();
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 2);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 2);
 
                     continue;
                 }
@@ -423,6 +442,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nSigning **" + apkName + "**...");
+                    IncressProgressBar(apkFiles.length, 1);
 
                     String[] arg = new String[]{
                             "sign",
@@ -439,17 +459,17 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = error.toString();
                     Utils.FileviewChangeText(index, "✖️ " + file + " 🔘" + errorMessage);
+                    IncressProgressBar(apkFiles.length, 1);
 
                     continue;
                 }
 
-
                 //?? -------------------- [[ Cleaning temp ]] --------------------
                 ChangeStateText("### Current Status\n---\nCleaning directory...");
+                IncressProgressBar(apkFiles.length, 1);
+
                 Utils.CleanupTempDir();
-
                 Utils.FileviewChangeText(index, "✔️ " + file);
-
 
                 index++;
             }
@@ -464,15 +484,23 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             ChangeButtonState();
 
-            if (errorMessage != null && !errorMessage.isEmpty())
-                ChangeStateText("### ERROR\n---\n\n```\n" + errorMessage + "\n```");
-            else
-                ChangeStateText("### Current Status\n---\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                PercentText.setText("Error");
 
+                ChangeStateText("### ERROR\n---\n\n```\n" + errorMessage + "\n```");
+            } else {
+                PercentText.setText("Successful");
+
+                ChangeStateText("### Current Status\n---\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.");
+            }
+
+            StatusProgressBar.setProgress(100);
         }
 
         protected void onCancelled() {
             ChangeButtonState();
+
+            PercentText.setText("Terminated");
 
             ChangeStateText("### Current Status\n---\nCleaning directory...");
             Utils.CleanupTempDir();
@@ -533,5 +561,15 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    private void IncressProgressBar(int count, int time) {
+        StatusProgressBar.incrementProgressBy(((95 / 5) * time) / count);
+        PercentText.setText(StatusProgressBar.getProgress() + "%");
+    }
+
+    private void ResetAppearance() {
+        StatusProgressBar.setProgress(0);
+        PercentText.setText("");
     }
 }
