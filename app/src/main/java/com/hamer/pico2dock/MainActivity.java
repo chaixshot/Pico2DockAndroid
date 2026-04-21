@@ -510,12 +510,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ChangeButtonState() {
-        if (PermissionHelper.IsPermissionsGranted && (APKFiles != null && APKFiles.length > 0) && (MainTask == null || MainTask.getStatus() != AsyncTask.Status.RUNNING))
+        if (PermissionHelper.IsPermissionsGranted && (APKFiles != null && APKFiles.length > 0) && (MainTask == null || MainTask.getStatus() != AsyncTask.Status.RUNNING || MainTask.getStatus() != AsyncTask.Status.FINISHED))
             ButtonStart.setEnabled(true);
         else
             ButtonStart.setEnabled(false);
 
-        if (MainTask != null && !MainTask.isCancelled() && MainTask.getStatus() == AsyncTask.Status.RUNNING)
+        if (MainTask != null && !MainTask.isCancelled() && MainTask.getStatus() == AsyncTask.Status.RUNNING && !ButtonStart.isEnabled())
             ButtonCancel.setEnabled(true);
         else
             ButtonCancel.setEnabled(false);
