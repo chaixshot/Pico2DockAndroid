@@ -10,10 +10,12 @@ import java.io.InputStream;
 import java.util.Random;
 
 public class Utils {
-    public static File GetKeystoreFile(Context context) {
+    static MainActivity mainActivity = MainActivity.getInstance();
+
+    public static File GetKeystoreFile() {
         File keystore;
 
-        Resources resources = context.getResources();
+        Resources resources = mainActivity.getResources();
         try {
             // Open the audio file from the raw folder
             InputStream inputStream = resources.openRawResource(R.raw.keystore);
@@ -22,7 +24,7 @@ public class Utils {
             inputStream.close();
 
             // Create a new File Object
-            keystore = new File(context.getExternalFilesDir(null), "keystore.jks");
+            keystore = new File(mainActivity.getExternalFilesDir(null), "keystore.jks");
             FileOutputStream outputStream = new FileOutputStream(keystore);
             outputStream.write(bytes);
             outputStream.close();

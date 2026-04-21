@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     boolean IsHideDock = false;
     boolean IsRePackage = false;
     boolean IsRePackageAdv = false;
+    private static MainActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        PermissionHelper.CheckPermission(this);
-        keystore = Utils.GetKeystoreFile(this);
+        instance = this;
+
+        PermissionHelper.CheckPermission();
+        keystore = Utils.GetKeystoreFile();
 
         ButtonStart = (Button) findViewById(R.id.ButtonStart);
         ButtonCancel = (Button) findViewById(R.id.ButtonCancel);
@@ -93,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
 
         CheckboxRePackage = (CheckBox) findViewById(R.id.CheckboxRePackage);
         CheckboxRePackageAdv = (CheckBox) findViewById(R.id.CheckboxRePackageAdv);
+    }
+
+    public static MainActivity getInstance() {
+        return instance;
     }
 
     public void SelectFile(View view) {
@@ -464,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ClickRequestPermission(View view) {
-        PermissionHelper.CheckPermission(this);
+        PermissionHelper.CheckPermission();
     }
 
 
