@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     boolean IsHideDock = false;
     boolean IsRePackage = false;
     boolean IsRePackageAdv = false;
+    boolean IsProcessRunning = false;
     private static MainActivity instance;
 
     @Override
@@ -141,13 +142,13 @@ public class MainActivity extends AppCompatActivity {
         IsHideDock = SwtichHideDock.isChecked();
         IsRePackage = CheckboxRePackage.isChecked();
         IsRePackageAdv = CheckboxRePackageAdv.isChecked();
+        IsProcessRunning = true;
 
         Utils.FileviewClearTag();
         ResetAppearance();
+        ChangeButtonState();
 
         MainTask = new Worker().execute(APKFiles);
-
-        ChangeButtonState();
     }
 
     public void ClearFileList(View view) {
@@ -481,7 +482,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            ChangeButtonState();
 
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 PercentText.setText("Error");
@@ -494,27 +494,32 @@ public class MainActivity extends AppCompatActivity {
             }
 
             StatusProgressBar.setProgress(100);
+            IsProcessRunning = false;
+            ChangeButtonState();
         }
 
         protected void onCancelled() {
-            ChangeButtonState();
-
             PercentText.setText("Terminated");
 
             ChangeStateText("### Current Status\n---\nCleaning directory...");
             Utils.CleanupTempDir();
 
             ChangeStateText("### Current Status\n---\nProcess has been terminated.");
+
+            IsProcessRunning = false;
+            ChangeButtonState();
         }
     }
 
     private void ChangeButtonState() {
-        if (PermissionHelper.IsPermissionsGranted && (APKFiles != null && APKFiles.length > 0) && (MainTask == null || MainTask.getStatus() != AsyncTask.Status.RUNNING || MainTask.getStatus() != AsyncTask.Status.FINISHED))
+        if (PermissionHelper.IsPermissionsGranted &&
+                (APKFiles != null && APKFiles.length > 0) &&
+                (!IsProcessRunning))
             ButtonStart.setEnabled(true);
         else
             ButtonStart.setEnabled(false);
 
-        if (MainTask != null && !MainTask.isCancelled() && MainTask.getStatus() == AsyncTask.Status.RUNNING && !ButtonStart.isEnabled())
+        if (IsProcessRunning && !ButtonStart.isEnabled())
             ButtonCancel.setEnabled(true);
         else
             ButtonCancel.setEnabled(false);
@@ -563,12 +568,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void IncressProgressBar(int count, int time) {
-        StatusProgressBar.incrementProgressBy(((95 / 5) * time) / count);
-        PercentText.setText(StatusProgressBar.getProgress() + "%");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                StatusProgressBar.setVisibility(VISIBLE);
+                StatusProgressBar.incrementProgressBy(((95 / 5) * time) / count);
+                PercentText.setText(StatusProgressBar.getProgress() + "%");
+            }
+        });
     }
 
     private void ResetAppearance() {
         StatusProgressBar.setProgress(0);
+        StatusProgressBar.setVisibility(View.INVISIBLE);
         PercentText.setText("");
     }
 }
