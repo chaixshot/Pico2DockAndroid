@@ -11,21 +11,18 @@ import androidx.core.content.ContextCompat;
 
 public class PermissionHelper {
     static MainActivity mainActivity = MainActivity.getInstance();
-    static CardView WarningCard = (CardView) mainActivity.findViewById(R.id.CardPermissionWarning);
-    static Button ButtonStart = (Button) mainActivity.findViewById(R.id.ButtonStart);
+    static Runnable callback;
 
-    public static void CheckPermission() {
+    public static void CheckPermission(Runnable cb) {
+        callback = cb;
         if (ContextCompat.checkSelfPermission(mainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            WarningCard.setVisibility(CardView.VISIBLE);
-
-            ActivityCompat.requestPermissions(mainActivity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 112);
         } else {
-            PermissionsGranted();
+            callback.run();
         }
     }
 
     public static void PermissionsGranted() {
-        WarningCard.setVisibility(CardView.GONE);
+        callback.run();
     }
 }

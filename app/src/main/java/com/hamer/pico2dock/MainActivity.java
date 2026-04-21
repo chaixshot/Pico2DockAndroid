@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
         ResetAppearance();
         ChangeButtonState();
-
-        PermissionHelper.CheckPermission();
     }
 
     public static MainActivity getInstance() {
@@ -107,34 +105,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SelectFile(View view) {
-        DialogProperties properties = new DialogProperties();
+        PermissionHelper.CheckPermission(() -> {
+            DialogProperties properties = new DialogProperties();
 
-        properties.selection_mode = DialogConfigs.MULTI_MODE;
-        properties.selection_type = DialogConfigs.FILE_SELECT;
-        properties.root = new File(DialogConfigs.DEFAULT_DIR);
-        properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
-        properties.offset = new File(DialogConfigs.DEFAULT_DIR);
-        properties.extensions = new String[]{"apk"};
-        properties.show_hidden_files = false;
+            properties.selection_mode = DialogConfigs.MULTI_MODE;
+            properties.selection_type = DialogConfigs.FILE_SELECT;
+            properties.root = new File(DialogConfigs.DEFAULT_DIR);
+            properties.error_dir = new File(DialogConfigs.DEFAULT_DIR);
+            properties.offset = new File(DialogConfigs.DEFAULT_DIR);
+            properties.extensions = new String[]{"apk"};
+            properties.show_hidden_files = false;
 
-        FilePickerDialog dialog = new FilePickerDialog(MainActivity.this, properties);
-        dialog.setTitle("Select apk files");
+            FilePickerDialog dialog = new FilePickerDialog(MainActivity.this, properties);
+            dialog.setTitle("Select apk files");
 
-        dialog.setDialogSelectionListener(new DialogSelectionListener() {
-            @Override
-            public void onSelectedFilePaths(String[] files) {
-                if (files.length > 0) {
-                    APKFiles = files;
+            dialog.setDialogSelectionListener(new DialogSelectionListener() {
+                @Override
+                public void onSelectedFilePaths(String[] files) {
+                    if (files.length > 0) {
+                        APKFiles = files;
 
-                    Utils.FileviewApply(files);
+                        Utils.FileviewApply(files);
 
-                    TextViewSelectHint.setVisibility(View.GONE);
-                    ChangeButtonState();
+                        TextViewSelectHint.setVisibility(View.GONE);
+                        ChangeButtonState();
+                    }
                 }
-            }
-        });
+            });
 
-        dialog.show();
+            dialog.show();
+        });
     }
 
     public void StartMainTask(View view) {
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...");
-                    IncressProgressBar(apkFiles.length, 1);
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                     DecompileOptions options = new DecompileOptions();
                     options.inputFile = apkFile;
@@ -243,13 +243,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
-                    IncressProgressBar(apkFiles.length, 4);
+                    IncreaseProgressBar(apkFiles.length, 4);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
-                    IncressProgressBar(apkFiles.length, 4);
+                    IncreaseProgressBar(apkFiles.length, 4);
 
                     continue;
                 }
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nModifing **AndroidManifest.xml** of **" + apkName + "**...");
-                    IncressProgressBar(apkFiles.length, 1);
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                     String androidSpace = "http://schemas.android.com/apk/res/android";
 
@@ -403,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
-                    IncressProgressBar(apkFiles.length, 3);
+                    IncreaseProgressBar(apkFiles.length, 3);
 
                     continue;
                 }
@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...");
-                    IncressProgressBar(apkFiles.length, 1);
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                     BuildOptions options = new BuildOptions();
 
@@ -426,13 +426,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
-                    IncressProgressBar(apkFiles.length, 2);
+                    IncreaseProgressBar(apkFiles.length, 2);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
-                    IncressProgressBar(apkFiles.length, 2);
+                    IncreaseProgressBar(apkFiles.length, 2);
 
                     continue;
                 }
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("### Current Status\n---\nSigning **" + apkName + "**...");
-                    IncressProgressBar(apkFiles.length, 1);
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                     String[] arg = new String[]{
                             "sign",
@@ -458,14 +458,14 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
                     Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
-                    IncressProgressBar(apkFiles.length, 1);
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                     continue;
                 }
 
                 //?? -------------------- [[ Cleaning temp ]] --------------------
                 ChangeStateText("### Current Status\n---\nCleaning directory...");
-                IncressProgressBar(apkFiles.length, 1);
+                IncreaseProgressBar(apkFiles.length, 1);
 
                 Utils.CleanupTempDir();
                 Utils.FileviewChangeText(index, "✅ " + file);
@@ -546,26 +546,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void ClickRequestPermission(View view) {
-        PermissionHelper.CheckPermission();
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 0: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    PermissionHelper.PermissionsGranted();
-                } else {
 
-                }
-                return;
-            }
+        if (requestCode == 112) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                PermissionHelper.PermissionsGranted();
         }
     }
 
-    private void IncressProgressBar(int count, int time) {
+    private void IncreaseProgressBar(int count, int time) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

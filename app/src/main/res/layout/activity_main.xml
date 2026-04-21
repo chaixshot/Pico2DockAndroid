@@ -24,25 +24,6 @@
             android:visibility="visible">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/CardPermissionWarning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:visibility="gone"
-                app:cardCornerRadius="32dp"
-                app:contentPadding="20dp">
-
-                <TextView
-                    android:id="@+id/TextPermissionWarning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="ClickRequestPermission"
-                    android:text="⚠️  Tab here to allow the app to access device storage"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
                 android:id="@+id/CardBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
