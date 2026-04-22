@@ -2,12 +2,20 @@ package com.hamer.pico2dock;
 
 import static android.view.View.VISIBLE;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
@@ -15,6 +23,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -51,6 +60,7 @@ import io.noties.markwon.Markwon;
 
 public class MainActivity extends AppCompatActivity {
     String[] APKFiles;
+    String[] APKFilesOut;
     File keystore;
 
     AsyncTask MainTask;
@@ -124,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSelectedFilePaths(String[] files) {
                     if (files.length > 0) {
                         APKFiles = files;
+                        APKFilesOut = files;
 
                         FileviewHelper.FileviewApply(files);
 
@@ -154,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         String[] empty = new String[]{};
 
         APKFiles = empty;
+        APKFilesOut = empty;
 
         FileviewHelper.FileviewApply(empty);
 
@@ -470,6 +482,8 @@ public class MainActivity extends AppCompatActivity {
                 Utils.CleanupTempDir();
                 FileviewHelper.FileviewChangeText(index, "✅ " + file);
 
+                APKFilesOut[index] = dirApkOut.getPath();
+
                 index++;
             }
 
@@ -573,5 +587,78 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 PermissionHelper.WritePermissionGranted();
         }
+    }
+
+    //** Context menu
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        menu.add("Install");
+        menu.add("Delete");
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        assert info != null;
+        Context _this = this;
+
+        String apkPath = APKFiles[info.position];
+        File apkFile = new File(apkPath.replace("🛠️ ", "").replace("✅ ", ""));
+
+        String apkOutPath = APKFilesOut[info.position];
+        File apkOutFile = new File(apkOutPath);
+
+        Boolean isConverted = apkPath.contains("✅");
+
+        String apkTargetPath = isConverted ? apkOutPath : apkPath;
+        File apkTargetFile = isConverted ? apkOutFile : apkFile;
+
+        if (item.getTitle() == "Install") {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Do you want to install?");
+            builder.setMessage(apkTargetPath);
+
+            builder.setPositiveButton("YES", (dialog, which) -> {
+                try {
+                    PermissionHelper.AskInstallPermission();
+
+                    // Create Uri
+                    Uri apkUri = getUriForFile(_this, getPackageName(), apkTargetFile);
+
+                    // Intent to open apk
+                    Intent intent = new Intent(Intent.ACTION_VIEW, apkUri);
+                    intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+                } catch (Settings.SettingNotFoundException e) {
+                    ChangeStateText("### ERROR\n---\n\n" + e);
+                }
+
+                dialog.dismiss();
+            }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+        if (item.getTitle() == "Delete") {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Do you want to delete?");
+            builder.setMessage(apkTargetPath);
+
+            builder.setPositiveButton("YES", (dialog, which) -> {
+                apkTargetFile.delete();
+                dialog.dismiss();
+            }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+        return super.onContextItemSelected(item);
     }
 }
