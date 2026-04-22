@@ -141,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSelectedFilePaths(String[] files) {
                     if (files.length > 0) {
-                        APKFiles = files;
-                        APKFilesOut = files;
+                        APKFiles = files.clone();
+                        APKFilesOut = files.clone();
 
                         FileviewHelper.FileviewApply(files);
 
