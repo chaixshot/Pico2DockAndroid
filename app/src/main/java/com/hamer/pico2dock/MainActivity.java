@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     if (files.length > 0) {
                         APKFiles = files;
 
-                        Utils.FileviewApply(files);
+                        FileviewHelper.FileviewApply(files);
 
                         TextViewSelectHint.setVisibility(View.GONE);
                         ChangeButtonState();
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         IsRePackageAdv = CheckboxRePackageAdv.isChecked();
         IsProcessRunning = true;
 
-        Utils.FileviewClearTag();
+        FileviewHelper.FileviewClearTag();
         ResetAppearance();
         ChangeButtonState();
 
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
         APKFiles = empty;
 
-        Utils.FileviewApply(empty);
+        FileviewHelper.FileviewApply(empty);
 
         TextViewSelectHint.setVisibility(VISIBLE);
         ChangeButtonState();
@@ -195,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
                     continue;
 
                 //?? -------------------- [[ File indicator ]] --------------------
-                Utils.FileviewChangeText(index, "🛠️ " + file);
-                Utils.FileviewSelect(index);
+                FileviewHelper.FileviewChangeText(index, "🛠️ " + file);
+                FileviewHelper.FileviewSelect(index);
 
                 File dirPico2Dock = new File("storage/emulated/0/Pico2Dock");
                 File dirWorker = new File(dirPico2Dock + "/Worker");
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!isExist || !isFile || !isReadable) {
                     errorMessage = "Can't access file \"" + file + "\"";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
 
                     continue;
                 }
@@ -242,13 +242,13 @@ public class MainActivity extends AppCompatActivity {
                     executor.runCommand();
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
                     IncreaseProgressBar(apkFiles.length, 4);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
                     IncreaseProgressBar(apkFiles.length, 4);
 
                     continue;
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             } catch (XPathExpressionException error) {
                                 errorMessage = "```\n" + error.toString() + "\n```";
-                                Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
+                                FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
 
                                 continue;
                             }
@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
                     transformer.transform(source, result);
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
                     IncreaseProgressBar(apkFiles.length, 3);
 
                     continue;
@@ -425,13 +425,13 @@ public class MainActivity extends AppCompatActivity {
                     executor.runCommand();
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
                     IncreaseProgressBar(apkFiles.length, 2);
 
                     continue;
                 } catch (OutOfMemoryError error) {
                     errorMessage = "Out of memory";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + errorMessage);
                     IncreaseProgressBar(apkFiles.length, 2);
 
                     continue;
@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
                     idsig.delete();
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
-                    Utils.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
+                    FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
                     IncreaseProgressBar(apkFiles.length, 1);
 
                     continue;
@@ -468,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
                 IncreaseProgressBar(apkFiles.length, 1);
 
                 Utils.CleanupTempDir();
-                Utils.FileviewChangeText(index, "✅ " + file);
+                FileviewHelper.FileviewChangeText(index, "✅ " + file);
 
                 index++;
             }
