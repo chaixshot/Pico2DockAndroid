@@ -1,8 +1,9 @@
 ﻿<div align="center">
   <img src="Resource/icon.ico" width="128" height="128"/>
   
-  # Pico2Dock Android ([Desktop](https://github.com/chaixshot/Pico2Dock))
+  # Pico2Dock Android
   ### Convert the APK file for Pico 4 VR to change the application state from Floating Far app to Dashboard Near Dock, similar to File Manager.<br>Allow multitasking while in a full-screen immersive app.
+  ### [Desktop Version](https://github.com/chaixshot/Pico2Dock)
   </div>
   
   ## 🖥️ Application screenshot
