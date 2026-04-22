@@ -92,7 +92,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
-                                android:text="Large APK file might crash the application."
+                                android:text="A large APK file might run out of memory, using desktop version instead."
                                 android:textSize="12sp"
                                 android:visibility="visible" />
 
@@ -101,7 +101,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:enabled="false"
-                                android:text="Please clear memory before start to prevent out of memory issue."
+                                android:text="Press Pico Optimize Memory to preserve more RAM usage to do this task"
                                 android:textSize="12sp"
                                 android:visibility="visible" />
                         </LinearLayout>
