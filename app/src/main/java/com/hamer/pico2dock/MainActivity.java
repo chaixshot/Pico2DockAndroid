@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ import com.developer.filepicker.view.FilePickerDialog;
 import com.reandroid.apkeditor.compile.BuildOptions;
 import com.reandroid.apkeditor.decompile.DecompileOptions;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -74,10 +76,14 @@ public class MainActivity extends AppCompatActivity {
     CheckBox CheckboxRePackageAdv;
     ProgressBar StatusProgressBar;
     TextView PercentText;
+    EditText TextRename;
+    CheckBox CheckboxRename;
 
     boolean IsHideDock = false;
     boolean IsRePackage = false;
     boolean IsRePackageAdv = false;
+    String NamePrefix;
+    boolean IsRename = false;
     boolean IsProcessRunning = false;
     private static MainActivity instance;
 
@@ -105,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         CheckboxRePackageAdv = (CheckBox) findViewById(R.id.CheckboxRePackageAdv);
         StatusProgressBar = (ProgressBar) findViewById(R.id.StatusProgressBar);
         PercentText = (TextView) findViewById(R.id.PercentText);
+        TextRename = (EditText) findViewById(R.id.TextRename);
+        CheckboxRename = (CheckBox) findViewById(R.id.CheckboxRename);
 
         ResetAppearance();
         ChangeButtonState();
@@ -152,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
         IsHideDock = SwtichHideDock.isChecked();
         IsRePackage = CheckboxRePackage.isChecked();
         IsRePackageAdv = CheckboxRePackageAdv.isChecked();
+        NamePrefix = TextRename.getText().toString();
+        IsRename = CheckboxRename.isChecked();
         IsProcessRunning = true;
 
         FileviewHelper.FileviewClearTag();
@@ -401,6 +411,60 @@ public class MainActivity extends AppCompatActivity {
                                 FileviewHelper.FileviewChangeText(index, "❌ " + file + " ⭕ " + error.toString());
 
                                 continue;
+                            }
+                        }
+                    }
+
+                    if (!NamePrefix.isEmpty()) {
+                        Element application = (Element) xmlRoot.getElementsByTagName("application").item(0);
+                        Attr labelAttr = application.getAttributeNodeNS(androidSpace, "label");
+
+                        if (IsRename) {
+                            if (labelAttr != null) {
+                                labelAttr.setValue(NamePrefix);
+                            } else {
+                                application.setAttributeNS(androidSpace, "android:label", NamePrefix);
+                            }
+                        } else {
+                            String stringID = "app_name";
+                            if (labelAttr != null) {
+                                String val = labelAttr.getValue();
+                                if (val != null) {
+                                    stringID = val.replace("@string/", "");
+                                }
+                            }
+
+                            File resDir = new File(dirWorker+"/resources/package_1/res");
+                            File[] dirs = resDir.listFiles(File::isDirectory);
+                            if (dirs != null) {
+                                for (File dir : dirs) {
+                                    if (dir.getName().contains("values")) {
+                                        File stringsFile = new File(dir, "strings.xml");
+                                        if (stringsFile.exists()) {
+                                            DocumentBuilderFactory sFactory = DocumentBuilderFactory.newInstance();
+                                            DocumentBuilder sBuilder = sFactory.newDocumentBuilder();
+                                            Document stringDoc = sBuilder.parse(stringsFile);
+                                            stringDoc.getDocumentElement().normalize();
+
+                                            NodeList stringNodes = stringDoc.getElementsByTagName("string");
+                                            for (int i = 0; i < stringNodes.getLength(); i++) {
+                                                Element srt = (Element) stringNodes.item(i);
+                                                if (srt.hasAttribute("name") && srt.getAttribute("name").contains(stringID)) {
+                                                    String currentValue = srt.getTextContent();
+                                                    srt.setTextContent(currentValue + NamePrefix);
+                                                }
+                                            }
+
+                                            // Save changes back to file
+                                            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                                            Transformer transformer = transformerFactory.newTransformer();
+                                            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                                            DOMSource source = new DOMSource(stringDoc);
+                                            StreamResult result = new StreamResult(stringsFile);
+                                            transformer.transform(source, result);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

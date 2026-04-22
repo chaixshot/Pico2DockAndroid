@@ -289,7 +289,7 @@
                             android:orientation="vertical">
 
                             <EditText
-                                android:id="@+id/editTextText"
+                                android:id="@+id/TextRename"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="-4dp"
@@ -302,7 +302,7 @@
                                 android:tooltipText="Add text to the end of the original app name. \n\nLeave it black to do nothing. \n\nNot working for an app that can change its name through its settings." />
 
                             <CheckBox
-                                android:id="@+id/CheckboxRePackageAdv"
+                                android:id="@+id/CheckboxRename"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="-3dp"
