@@ -156,7 +156,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:onClick="SelectFile"
-                    android:text="Tab here to select file"
+                    android:text="Click here to select file"
                     android:textSize="24sp" />
             </androidx.cardview.widget.CardView>
 

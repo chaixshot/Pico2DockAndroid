@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SelectFile(View view) {
-        PermissionHelper.CheckPermission(() -> {
+        PermissionHelper.CheckWritePermission(() -> {
             DialogProperties properties = new DialogProperties();
 
             properties.selection_mode = DialogConfigs.MULTI_MODE;
@@ -552,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 112) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                PermissionHelper.PermissionsGranted();
+                PermissionHelper.WritePermissionGranted();
         }
     }
 
