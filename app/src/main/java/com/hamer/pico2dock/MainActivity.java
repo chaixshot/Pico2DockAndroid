@@ -567,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 PercentText.setText("Successful");
 
-                ChangeStateText("### Current Status\n---\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.");
+                ChangeStateText("### Current Status\n---\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.\nLong click file in the box above to see an options.");
             }
 
             StatusProgressBar.setProgress(100);
