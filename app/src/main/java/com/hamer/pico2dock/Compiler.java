@@ -21,8 +21,24 @@ public class Compiler extends com.reandroid.apkeditor.compile.Builder {
     }
 
     @Override
+    public void logMessage(String tag, String msg) {
+        super.logMessage(tag, msg);
+
+        if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
+            mainActivity.ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...\n\n``" + msg + "``");
+    }
+
+    @Override
     public void logVerbose(String msg) {
-        super.logMessage(msg);
+        super.logVerbose(msg);
+
+        if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
+            mainActivity.ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...\n\n``" + msg + "``");
+    }
+
+    @Override
+    public void logVerbose(String tag, String msg) {
+        super.logVerbose(tag, msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
             mainActivity.ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...\n\n``" + msg + "``");
@@ -30,7 +46,7 @@ public class Compiler extends com.reandroid.apkeditor.compile.Builder {
 
     @Override
     public void logError(String msg, Throwable tr) {
-        super.logMessage(msg);
+        super.logError(msg, tr);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
             mainActivity.ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...\n\n``" + msg + "``");
