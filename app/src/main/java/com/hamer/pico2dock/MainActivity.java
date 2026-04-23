@@ -295,19 +295,25 @@ public class MainActivity extends AppCompatActivity {
 
                     // Add docked attribute
                     if (true) {
-                        Element metaData = xmlDoc.createElement("meta-data");
-                        metaData.setAttributeNS(androidSpace, "android:name", "pico.vr.position");
-                        metaData.setAttributeNS(androidSpace, "android:value", IsHideDock ? "near_dialog" : "near");
+                        Element metaDataVrPosition = xmlDoc.createElement("meta-data");
+                        metaDataVrPosition.setAttributeNS(androidSpace, "android:name", "pico.vr.position");
+                        metaDataVrPosition.setAttributeNS(androidSpace, "android:value", IsHideDock ? "near_dialog" : "near");
+
+                        Element metaDataVrMode = xmlDoc.createElement("meta-data");
+                        metaDataVrMode.setAttributeNS(androidSpace, "android:name", "pvr.2dtovr.mode");
+                        metaDataVrMode.setAttributeNS(androidSpace, "android:value", "6");
 
                         // Add metaData to all activities and activity-alias elements under application
                         NodeList activities = application.getElementsByTagName("activity");
                         for (int i = 0; i < activities.getLength(); i++) {
-                            activities.item(i).appendChild(metaData.cloneNode(true));
+                            activities.item(i).appendChild(metaDataVrPosition.cloneNode(true));
+                            activities.item(i).appendChild(metaDataVrMode.cloneNode(true));
                         }
 
                         NodeList aliases = application.getElementsByTagName("activity-alias");
                         for (int i = 0; i < aliases.getLength(); i++) {
-                            aliases.item(i).appendChild(metaData.cloneNode(true));
+                            aliases.item(i).appendChild(metaDataVrPosition.cloneNode(true));
+                            aliases.item(i).appendChild(metaDataVrMode.cloneNode(true));
                         }
                     }
 
@@ -322,6 +328,11 @@ public class MainActivity extends AppCompatActivity {
                         metaDataVRShell.setAttributeNS(androidSpace, "android:name", "pvr.vrshell.mode");
                         metaDataVRShell.setAttributeNS(androidSpace, "android:value", "1");
                         application.appendChild(metaDataVRShell);
+
+                        Element metaDataTrackingMode = xmlDoc.createElement("meta-data");
+                        metaDataTrackingMode.setAttributeNS(androidSpace, "android:name", "com.pvr.hmd.trackingmode");
+                        metaDataTrackingMode.setAttributeNS(androidSpace, "android:value", "3dof");
+                        application.appendChild(metaDataTrackingMode);
 
                         Element metaDataPermissionDimShow = xmlDoc.createElement("meta-data");
                         metaDataPermissionDimShow.setAttributeNS(androidSpace, "android:name", "pico_permission_dim_show");
