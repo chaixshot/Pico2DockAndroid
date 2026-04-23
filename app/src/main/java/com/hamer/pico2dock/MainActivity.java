@@ -258,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
                     options.loadDex = 1; // 1.4.2++
 
                     Decompiler executor = new Decompiler(options, apkName);
-                    executor.logMessage(this.toString());
                     executor.runCommand();
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
@@ -338,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
                         metaDataPermissionDimShow.setAttributeNS(androidSpace, "android:name", "pico_permission_dim_show");
                         metaDataPermissionDimShow.setAttributeNS(androidSpace, "android:value", "false");
                         application.appendChild(metaDataPermissionDimShow);
+
+                        application.setAttributeNS(androidSpace, "android:screenOrientation", "landscape");
                     }
 
                     // Get package name and generate new package name
@@ -402,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Handle application label
+                    // Change app name
                     if (!NamePrefix.isEmpty()) {
                         if (IsRename) {
                             application.setAttributeNS(androidSpace, "android:label", NamePrefix);
@@ -468,7 +469,6 @@ public class MainActivity extends AppCompatActivity {
                     options.type = BuildOptions.TYPE_XML;
 
                     Compiler executor = new Compiler(options, apkName);
-                    executor.logMessage(this.toString());
                     executor.runCommand();
                 } catch (Exception error) {
                     errorMessage = "```\n" + error.toString() + "\n```";
