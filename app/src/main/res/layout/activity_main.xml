@@ -341,6 +341,7 @@
                                 android:id="@+id/CheckboxRename"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginLeft="-3dp"
                                 android:layout_marginTop="-3dp"
                                 android:layout_marginBottom="-3dp"
                                 android:text="Rename"
@@ -386,9 +387,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:paddingTop="1dp"
                             android:text="40%"
-                            android:textSize="10sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </FrameLayout>
 

@@ -584,6 +584,12 @@ public class MainActivity extends AppCompatActivity {
             TextViewSelectHint.setVisibility(View.GONE);
         else
             TextViewSelectHint.setVisibility(VISIBLE);
+
+        SwtichHideDock.setEnabled(!IsProcessRunning);
+        CheckboxRePackage.setEnabled(!IsProcessRunning);
+        CheckboxRePackageAdv.setEnabled(!IsProcessRunning);
+        TextRename.setEnabled(!IsProcessRunning);
+        CheckboxRename.setEnabled(!IsProcessRunning);
     }
 
     public void ChangeStateText(String text) {
