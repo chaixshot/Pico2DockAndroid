@@ -21,7 +21,7 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logMessage(msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logMessage(tag, msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logVerbose(msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logVerbose(tag, msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logError(msg, tr);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 
     @Override
@@ -61,6 +61,6 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
         super.logWarn(msg);
 
         if (mainActivity.findViewById(R.id.ButtonCancel).isEnabled())
-            mainActivity.ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
+            mainActivity.ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...\n\n``" + msg + "``");
     }
 }

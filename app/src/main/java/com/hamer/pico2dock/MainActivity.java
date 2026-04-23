@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void ButtonCancelPressed(View view) {
         if (!MainTask.isCancelled()) {
-            ChangeStateText("### Current Status\n---\nCanceling process please wait...");
+            ChangeStateText("## Current Status\nCanceling process please wait...");
 
             MainTask.cancel(true);
 
@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         int index = 0;
 
         protected String doInBackground(String... apkFiles) {
-            ChangeStateText("### Current Status\n---\nCleaning directory...");
+            ChangeStateText("## Current Status\nCleaning directory...");
             Utils.CleanupTempDir();
 
             for (String file : apkFiles) {
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start decompiler apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    ChangeStateText("### Current Status\n---\nDecompiling **" + apkName + "**...");
+                    ChangeStateText("## Current Status\nDecompiling **" + apkName + "**...");
                     IncreaseProgressBar(apkFiles.length, 1);
 
                     DecompileOptions options = new DecompileOptions();
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Edit AndroidManifest.xml ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    ChangeStateText("### Current Status\n---\nModifing **AndroidManifest.xml** of **" + apkName + "**...");
+                    ChangeStateText("## Current Status\nModifing **AndroidManifest.xml** of **" + apkName + "**...");
                     IncreaseProgressBar(apkFiles.length, 1);
 
                     String androidSpace = "http://schemas.android.com/apk/res/android";
@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start compiler apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    ChangeStateText("### Current Status\n---\nCompiling **" + apkName + "**...");
+                    ChangeStateText("## Current Status\nCompiling **" + apkName + "**...");
                     IncreaseProgressBar(apkFiles.length, 1);
 
                     BuildOptions options = new BuildOptions();
@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start signing apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    ChangeStateText("### Current Status\n---\nSigning **" + apkName + "**...");
+                    ChangeStateText("## Current Status\nSigning **" + apkName + "**...");
                     IncreaseProgressBar(apkFiles.length, 1);
 
                     String[] arg = new String[]{
@@ -514,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //?? -------------------- [[ Cleaning temp ]] --------------------
-                ChangeStateText("### Current Status\n---\nCleaning directory...");
+                ChangeStateText("## Current Status\nCleaning directory...");
                 IncreaseProgressBar(apkFiles.length, 1);
 
                 Utils.CleanupTempDir();
@@ -537,11 +537,11 @@ public class MainActivity extends AppCompatActivity {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 PercentText.setText("Error");
 
-                ChangeStateText("### ERROR\n---\n\n" + errorMessage);
+                ChangeStateText("## ERROR\n\n" + errorMessage);
             } else {
                 PercentText.setText("Successful");
 
-                ChangeStateText("### Current Status\n---\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.\nLong click file in the box above to see the options.");
+                ChangeStateText("## Current Status\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.\nLong click file in the box above to see the options.");
             }
 
             StatusProgressBar.setProgress(100);
@@ -552,10 +552,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onCancelled() {
             PercentText.setText("Terminated");
 
-            ChangeStateText("### Current Status\n---\nCleaning directory...");
+            ChangeStateText("## Current Status\nCleaning directory...");
             Utils.CleanupTempDir();
 
-            ChangeStateText("### Current Status\n---\nProcess has been terminated.");
+            ChangeStateText("## Current Status\nProcess has been terminated.");
 
             IsProcessRunning = false;
             ChangeButtonState();
@@ -700,7 +700,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    public void asdasd(View view) {
+    public void ButtonHelpOpen(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Help");
