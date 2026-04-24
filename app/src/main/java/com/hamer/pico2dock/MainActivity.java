@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 if (file.endsWith(".xapk") || file.endsWith(".apkm") || file.endsWith(".apks")) {
                     try {
                         ChangeStateText("## Current Status\nMerging **" + apkName + "**...");
+                        IncreaseProgressBar(apkFiles.length, 1);
 
                         String nameName = apkName.replace(".xapk", ".apk").replace(".apkm", ".apk").replace(".apks", ".apk");
                         MergerOptions options = new MergerOptions();
@@ -239,13 +240,24 @@ public class MainActivity extends AppCompatActivity {
                         dirApkOut = new File(dirOut, "Pico_" + apkName);
                         dirApkUnsing = new File(dirUnsign, apkName);
                     } catch (IOException error) {
-                        errorMessage = "```\n" + error.toString() + "\n```";
-                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                        IncreaseProgressBar(apkFiles.length, 4);
+                        if (!isCancelled()) {
+                            errorMessage = "```\n" + error.toString() + "\n```";
+                            FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
+                            IncreaseProgressBar(apkFiles.length, 5);
+                        }
+
+                        continue;
+                    } catch (OutOfMemoryError error) {
+                        if (!isCancelled()) {
+                            errorMessage = "Out of memory";
+                            FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
+                            IncreaseProgressBar(apkFiles.length, 5);
+                        }
 
                         continue;
                     }
-                }
+                } else
+                    IncreaseProgressBar(apkFiles.length, 1);
 
                 if (!apkFile.exists() || !apkFile.isFile() || !apkFile.canRead()) {
                     errorMessage = "Can't access file \"" + apkFile.getPath() + "\"";
@@ -279,15 +291,19 @@ public class MainActivity extends AppCompatActivity {
                     Decompiler executor = new Decompiler(options, apkName);
                     executor.runCommand();
                 } catch (Exception error) {
-                    errorMessage = "```\n" + error.toString() + "\n```";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                    IncreaseProgressBar(apkFiles.length, 4);
+                    if (!isCancelled()) {
+                        errorMessage = "```\n" + error.toString() + "\n```";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
+                        IncreaseProgressBar(apkFiles.length, 4);
+                    }
 
                     continue;
                 } catch (OutOfMemoryError error) {
-                    errorMessage = "Out of memory";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
-                    IncreaseProgressBar(apkFiles.length, 4);
+                    if (!isCancelled()) {
+                        errorMessage = "Out of memory";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
+                        IncreaseProgressBar(apkFiles.length, 4);
+                    }
 
                     continue;
                 }
@@ -468,9 +484,11 @@ public class MainActivity extends AppCompatActivity {
                     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
                     transformer.transform(new DOMSource(xmlDoc), new StreamResult(xmlFile));
                 } catch (Exception error) {
-                    errorMessage = "```\n" + error.toString() + "\n```";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                    IncreaseProgressBar(apkFiles.length, 3);
+                    if (!isCancelled()) {
+                        errorMessage = "```\n" + error.toString() + "\n```";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
+                        IncreaseProgressBar(apkFiles.length, 3);
+                    }
 
                     continue;
                 }
@@ -490,15 +508,19 @@ public class MainActivity extends AppCompatActivity {
                     Compiler executor = new Compiler(options, apkName);
                     executor.runCommand();
                 } catch (Exception error) {
-                    errorMessage = "```\n" + error.toString() + "\n```";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                    IncreaseProgressBar(apkFiles.length, 2);
+                    if (!isCancelled()) {
+                        errorMessage = "```\n" + error.toString() + "\n```";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
+                        IncreaseProgressBar(apkFiles.length, 2);
+                    }
 
                     continue;
                 } catch (OutOfMemoryError error) {
-                    errorMessage = "Out of memory";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
-                    IncreaseProgressBar(apkFiles.length, 2);
+                    if (!isCancelled()) {
+                        errorMessage = "Out of memory";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
+                        IncreaseProgressBar(apkFiles.length, 2);
+                    }
 
                     continue;
                 }
@@ -528,9 +550,11 @@ public class MainActivity extends AppCompatActivity {
                     File idsig = new File(dirApkOut, ".idsig");
                     idsig.delete();
                 } catch (Exception error) {
-                    errorMessage = "```\n" + error.toString() + "\n```";
-                    FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                    IncreaseProgressBar(apkFiles.length, 1);
+                    if (!isCancelled()) {
+                        errorMessage = "```\n" + error.toString() + "\n```";
+                        FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
+                        IncreaseProgressBar(apkFiles.length, 1);
+                    }
 
                     continue;
                 }
@@ -637,7 +661,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 StatusProgressBar.setVisibility(VISIBLE);
-                StatusProgressBar.incrementProgressBy((int) Math.round(((95 / 5) * time) / count));
+                StatusProgressBar.incrementProgressBy((int) Math.round(((95 / 6) * time) / count));
                 PercentText.setText(StatusProgressBar.getProgress() + "%");
             }
         });
