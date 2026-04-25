@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //?? -------------------- [[ Convert APKM to APK ]] --------------------
-                if (file.endsWith(".xapk") || file.endsWith(".apkm") || file.endsWith(".apks")) {
+                if (Pattern.matches(".*\\.(xapk|apkm|apks)", file)) {
                     File dirMerger = new File(dirPico2Dock, "Merger");
                     File dirZipper = new File(dirPico2Dock, "Zipper");
                     File dirZipUnpack = new File(dirZipper, "Unpack");
@@ -473,11 +473,12 @@ public class MainActivity extends AppCompatActivity {
 
                     // Change app name
                     if (!NamePrefix.isEmpty()) {
-                        if (IsRename) {
+                        String app_name = application.getAttributeNS(androidSpace, "label");
+
+                        if (IsRename || !Pattern.matches("@string\\/.*", app_name)) {
                             application.setAttributeNS(androidSpace, "android:label", NamePrefix);
                         } else {
-                            String label = application.getAttributeNS(androidSpace, "label");
-                            String stringID = (label != null && label.startsWith("@string/")) ? label.substring(8) : "app_name";
+                            String stringID = app_name.replace("@string/", "");
 
                             // Iterate over res/values* directories and update strings.xml
                             Path resPath = Paths.get(dirWorker + "/resources/package_1/res");
