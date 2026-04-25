@@ -278,14 +278,14 @@ public class MainActivity extends AppCompatActivity {
                         String newName = apkName.replaceAll("\\.x?apk[ms]?", ".apk");
                         MergerOptions options = new MergerOptions();
                         options.inputFile = apkFile;
-                        options.outputFile = new File(dirPico2Dock, dirMerger + newName);
+                        options.outputFile = new File(dirMerger, newName);
 
                         Merger executor = new Merger(options, apkName);
                         executor.runCommand();
 
                         // Change APK target to merged file
                         apkName = newName;
-                        apkFile = new File(dirPico2Dock, dirMerger + apkName);
+                        apkFile = new File(dirMerger, newName);
                         dirApkOut = new File(dirOut, "Pico_" + apkName);
                         dirApkUnsing = new File(dirUnsign, apkName);
                     } catch (IOException error) {

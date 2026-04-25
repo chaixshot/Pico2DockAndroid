@@ -52,6 +52,7 @@ public class Utils {
         CleanupDir("storage/emulated/0/Pico2Dock/Unsign");
         CleanupDir("storage/emulated/0/Pico2Dock/Apkm");
         CleanupDir("storage/emulated/0/Pico2Dock/Zipper");
+        CleanupDir("storage/emulated/0/Pico2Dock/Merger");
     }
 
     public static String generateString(int length) {
