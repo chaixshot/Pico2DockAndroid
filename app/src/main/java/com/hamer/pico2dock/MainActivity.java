@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
                             ZipUtil.unpack(apkFile, dirZipUnpack, new NameMapper() {
                                 Boolean pickArm64v8a = false;
+
                                 public String map(String name) {
                                     if (Pattern.matches("\\w*config.[\\w]{3,}.apk", name)) { // is architecture file
                                         if (Pattern.matches(".*arm64_v8a.*", name)) { // is arm64_v8a
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                         ChangeStateText("## Current Status\nMerging **" + apkName + "**...");
 
                         // Start merge split APK
-                        String newName = apkName.replace(".xapk", ".apk").replace(".apkm", ".apk").replace(".apks", ".apk");
+                        String newName = apkName.replaceAll("\\.x?apk[ms]?", ".apk");
                         MergerOptions options = new MergerOptions();
                         options.inputFile = apkFile;
                         options.outputFile = new File(dirPico2Dock, dirMerger + newName);
