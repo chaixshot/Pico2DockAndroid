@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("pico2dock") {
+            storeFile = file(".\\app\\src\\main\\res\\raw\\keystore.jks")
+            storePassword = "forpick2dock"
+            keyPassword = "forpick2dock"
+            keyAlias = "H@mer"
+        }
+    }
     namespace = "com.hamer.pico2dock"
     compileSdk {
         version = release(36) {
@@ -13,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.hamer.pico2dock"
         minSdk = 29
-        targetSdk = 36
+        targetSdk = 29
         versionCode = 1
         versionName = "1.0"
 
