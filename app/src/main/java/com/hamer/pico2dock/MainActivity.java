@@ -199,16 +199,17 @@ public class MainActivity extends AppCompatActivity {
 
     private class Worker extends AsyncTask<String, String, String> {
         String errorMessage;
-        int index = 0;
 
+        @Override
         protected String doInBackground(String... apkFiles) {
-            ChangeStateText("## Current Status\nCleaning directory...");
-            Utils.CleanupTempDir();
-
             for (String file : apkFiles) {
                 // skip is file error from previous task
                 if (file.contains("❌"))
                     continue;
+
+                ChangeStateText("## Current Status\nCleaning directory...");
+                Utils.CleanupTempDir();
+
                 errorMessage = "";
 
                 File apkFile = new File(file);
@@ -222,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 File dirApkUnsing = new File(dirUnsign, apkName);
 
                 Utils.ProgressBar progressBar = new Utils.ProgressBar(apkFiles.length, 5);
+                Integer index = Arrays.asList(apkFiles).indexOf(file);
 
                 //?? -------------------- [[ File indicator ]] --------------------
                 FileviewHelper.FileviewChangeText(index, "🛠️ " + file);
@@ -613,25 +615,20 @@ public class MainActivity extends AppCompatActivity {
                     continue;
                 }
 
-                //?? -------------------- [[ Cleaning temp ]] --------------------
-                ChangeStateText("## Current Status\nCleaning directory...");
                 progressBar.Increase(null);
-
-                Utils.CleanupTempDir();
                 FileviewHelper.FileviewChangeText(index, "✅ " + file);
-
                 APKFilesOut[index] = dirApkOut.getPath();
-
-                index++;
             }
 
             return null;
         }
 
+        @Override
         protected void onProgressUpdate(String... values) {
 //            setProgressPercent(progress[0]);
         }
 
+        @Override
         protected void onPostExecute(String result) {
 
             if (errorMessage != null && !errorMessage.isEmpty()) {
@@ -641,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 PercentText.setText("Successful");
 
-                ChangeStateText("## Current Status\nAll APK files have been modified.\nYou can install them using the APK files in Pico folder by the same folder as the original file.\nLong click file in the box above to see the options.");
+                ChangeStateText("## Current Status\nAll files have been modified.\n* You can install them using the APK files in Pico folder by the same folder as the original file.\n* Long click file in the box above to see the options.");
             }
 
             StatusProgressBar.setProgress(100);
@@ -649,6 +646,7 @@ public class MainActivity extends AppCompatActivity {
             ChangeButtonState();
         }
 
+        @Override
         protected void onCancelled() {
             PercentText.setText("Terminated");
 
@@ -665,8 +663,7 @@ public class MainActivity extends AppCompatActivity {
 
     //** UI
     private void ChangeButtonState() {
-        if ((APKFiles != null && APKFiles.length > 0) &&
-                (!IsProcessRunning))
+        if ((APKFiles != null && APKFiles.length > 0) && !IsProcessRunning)
             ButtonStart.setEnabled(true);
         else
             ButtonStart.setEnabled(false);
