@@ -305,9 +305,9 @@ public class MainActivity extends AppCompatActivity {
                         apkFile = new File(dirMerger, newName);
                         dirApkOut = new File(dirOut, "Pico_" + apkName);
                         dirApkUnsing = new File(dirUnsign, apkName);
-                    } catch (IOException error) {
+                    } catch (Exception error) {
                         if (!isCancelled()) {
-                            errorMessage = "```\n" + error.toString() + "\n```";
+                            errorMessage = "File **" + apkName + "** is not split APK.";
                             FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
                             progressBar.Increase(5);
                         }
@@ -319,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
                             FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
                             progressBar.Increase(5);
                         }
+                        cancel(true);
 
                         continue;
                     }
@@ -362,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
                         progressBar.Increase(4);
                     }
+                    cancel(true);
 
                     continue;
                 }
@@ -580,6 +582,7 @@ public class MainActivity extends AppCompatActivity {
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
                         progressBar.Increase(2);
                     }
+                    cancel(true);
 
                     continue;
                 }
