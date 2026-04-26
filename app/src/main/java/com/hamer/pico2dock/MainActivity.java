@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
                 File dirApkOut = new File(dirOut, "Pico_" + apkName);
                 File dirApkUnsing = new File(dirUnsign, apkName);
 
+                Utils.ProgressBar progressBar = new Utils.ProgressBar(apkFiles.length, 5);
+
                 //?? -------------------- [[ File indicator ]] --------------------
                 FileviewHelper.FileviewChangeText(index, "🛠️ " + file);
                 FileviewHelper.FileviewSelect(index);
@@ -239,7 +241,8 @@ public class MainActivity extends AppCompatActivity {
                     File dirZipper = new File(dirPico2Dock, "Zipper");
                     File dirZipUnpack = new File(dirZipper, "Unpack");
 
-                    IncreaseProgressBar(apkFiles.length, 1);
+                    progressBar.Step += 1;
+                    progressBar.Increase(null);
 
                     try {
                         // Remove unnecessary architecture
@@ -295,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
                         if (!isCancelled()) {
                             errorMessage = "```\n" + error.toString() + "\n```";
                             FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                            IncreaseProgressBar(apkFiles.length, 5);
+                            progressBar.Increase(5);
                         }
 
                         continue;
@@ -303,13 +306,12 @@ public class MainActivity extends AppCompatActivity {
                         if (!isCancelled()) {
                             errorMessage = "Out of memory";
                             FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
-                            IncreaseProgressBar(apkFiles.length, 5);
+                            progressBar.Increase(5);
                         }
 
                         continue;
                     }
-                } else
-                    IncreaseProgressBar(apkFiles.length, 1);
+                }
 
                 //?? -------------------- [[ Rename ]] --------------------
                 if (dirApkOut.exists()) {
@@ -325,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start decompiler apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    IncreaseProgressBar(apkFiles.length, 1);
                     ChangeStateText("## Decoder\nDecompiling resources of **" + apkName + "**...");
+                    progressBar.Increase(null);
 
                     DecompileOptions options = new DecompileOptions();
                     options.inputFile = apkFile;
@@ -339,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                        IncreaseProgressBar(apkFiles.length, 4);
+                        progressBar.Increase(4);
                     }
 
                     continue;
@@ -347,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "Out of memory";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
-                        IncreaseProgressBar(apkFiles.length, 4);
+                        progressBar.Increase(4);
                     }
 
                     continue;
@@ -357,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isCancelled()) break;
                 try {
                     ChangeStateText("## Current Status\nModifing **AndroidManifest.xml** of **" + apkName + "**...");
-                    IncreaseProgressBar(apkFiles.length, 1);
+                    progressBar.Increase(null);
 
                     String androidSpace = "http://schemas.android.com/apk/res/android";
 
@@ -533,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                        IncreaseProgressBar(apkFiles.length, 3);
+                        progressBar.Increase(3);
                     }
 
                     continue;
@@ -542,8 +544,8 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start compiler apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    IncreaseProgressBar(apkFiles.length, 1);
                     ChangeStateText("## Encoder\nBuilding **" + apkName + "**...");
+                    progressBar.Increase(null);
 
                     BuildOptions options = new BuildOptions();
 
@@ -557,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                        IncreaseProgressBar(apkFiles.length, 2);
+                        progressBar.Increase(2);
                     }
 
                     continue;
@@ -565,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "Out of memory";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + errorMessage);
-                        IncreaseProgressBar(apkFiles.length, 2);
+                        progressBar.Increase(2);
                     }
 
                     continue;
@@ -574,8 +576,8 @@ public class MainActivity extends AppCompatActivity {
                 //?? -------------------- [[ Start signing apk ]] --------------------
                 if (isCancelled()) break;
                 try {
-                    IncreaseProgressBar(apkFiles.length, 1);
                     ChangeStateText("## Signer\nSigning **" + apkName + "**");
+                    progressBar.Increase(null);
 
                     if (!dirOut.exists())
                         dirOut.mkdir();
@@ -605,7 +607,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!isCancelled()) {
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
-                        IncreaseProgressBar(apkFiles.length, 1);
+                        progressBar.Increase(1);
                     }
 
                     continue;
@@ -613,7 +615,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //?? -------------------- [[ Cleaning temp ]] --------------------
                 ChangeStateText("## Current Status\nCleaning directory...");
-                IncreaseProgressBar(apkFiles.length, 1);
+                progressBar.Increase(null);
 
                 Utils.CleanupTempDir();
                 FileviewHelper.FileviewChangeText(index, "✅ " + file);
@@ -655,6 +657,7 @@ public class MainActivity extends AppCompatActivity {
 
             ChangeStateText("## Current Status\nProcess has been terminated.");
 
+            StatusProgressBar.setProgress(100);
             IsProcessRunning = false;
             ChangeButtonState();
         }

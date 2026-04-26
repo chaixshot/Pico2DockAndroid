@@ -1,6 +1,10 @@
 package com.hamer.pico2dock;
 
+import static android.view.View.VISIBLE;
+
 import android.content.res.Resources;
+
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,5 +67,30 @@ public class Utils {
             res.append(valid.charAt(rnd.nextInt(valid.length())));
         }
         return res.toString();
+    }
+
+    public static class ProgressBar {
+        public Double Files;
+        public Double Step;
+
+        public ProgressBar(double files, double step) {
+            this.Files = files;
+            this.Step = step;
+        }
+
+        public void Increase(@Nullable Integer mul) {
+            if (mul == null)
+                mul = 1;
+
+            Integer finalMul = mul;
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mainActivity.StatusProgressBar.setVisibility(VISIBLE);
+                    mainActivity.StatusProgressBar.incrementProgressBy((int) Math.round(((100 / Step) * finalMul) / Files));
+                    mainActivity.PercentText.setText(mainActivity.StatusProgressBar.getProgress() + "%");
+                }
+            });
+        }
     }
 }
