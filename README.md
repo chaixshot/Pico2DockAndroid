@@ -34,4 +34,4 @@ No, but you can install **Docked** alongside **Floating** by checking the **Rand
 - [uber-apk-signer](https://github.com/patrickfav/uber-apk-signer) - Used for signing
 - [FilePicker](https://github.com/TutorialsAndroid/FilePicker) - Android Library to select files
 - [Markwon](https://github.com/noties/Markwon) - Textbox Markdown Syntax
-- [zt-zip](https://github.com/zeroturnaround/zt-zip) - ZIP Library
+- [zip4j](https://github.com/srikanth-lingala/zip4j) - Java library for zip files and streams 
