@@ -41,24 +41,23 @@ import com.reandroid.apkeditor.decompile.DecompileOptions;
 import com.reandroid.apkeditor.merge.MergerOptions;
 import com.reandroid.archive.ZipAlign;
 
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.zeroturnaround.zip.NameMapper;
-import org.zeroturnaround.zip.ZipInfoCallback;
-import org.zeroturnaround.zip.ZipUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -242,15 +241,18 @@ public class MainActivity extends AppCompatActivity {
 
                 errorMessage = "";
 
-                File apkFile = new File(file);
-                String apkName = apkFile.getName(); // Including extension
-                String filePath = apkFile.getAbsolutePath().replaceAll(apkName + "$", "");
                 File dirPico2Dock = new File("storage/emulated/0/Pico2Dock");
                 File dirWorker = new File(dirPico2Dock, "Worker");
                 File dirUnsign = new File(dirPico2Dock, "Unsign");
+                File apkFile = new File(file);
+                String apkName = apkFile.getName(); // Including extension
+                String filePath = apkFile.getAbsolutePath().replaceAll(apkName + "$", "");
                 File dirOut = new File(filePath, "Pico");
                 File dirApkOut = new File(dirOut, "Pico_" + apkName);
                 File dirApkUnsing = new File(dirUnsign, apkName);
+
+                if (!dirPico2Dock.exists())
+                    dirPico2Dock.mkdir();
 
                 Utils.ProgressBar progressBar = new Utils.ProgressBar(apkFiles.length, 5);
                 Integer index = Arrays.asList(apkFiles).indexOf(file);
@@ -271,50 +273,53 @@ public class MainActivity extends AppCompatActivity {
                 if (Pattern.matches(".*\\.(xapk|apkm|apks)", file)) {
                     File dirMerger = new File(dirPico2Dock, "Merger");
                     File dirZipper = new File(dirPico2Dock, "Zipper");
-                    File dirZipUnpack = new File(dirZipper, "Unpack");
+                    File dirZipApk = new File(dirZipper, apkName);
 
                     progressBar.Step += 1;
                     progressBar.Increase(null);
 
                     try {
-                        // Remove unnecessary architecture
-                        if (true) {
+                        if (true) { // Clean unnecessary architecture
                             ChangeStateText("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...");
 
                             if (!dirZipper.exists())
                                 dirZipper.mkdir();
+                            if (!dirZipApk.exists())
+                                dirZipApk.createNewFile();
 
-                            final String finalApkName = apkName;
+                            Files.copy(apkFile.toPath(), dirZipApk.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
                             final Boolean[] pickArm64v8a = {false};
+                            File finalApkFile = apkFile;
 
-                            ZipUtil.iterate(apkFile, new ZipInfoCallback() {
-                                public void process(ZipEntry zipEntry) throws IOException {
-                                    if (Pattern.matches(".*arm64_v8a.*", zipEntry.getName()))
-                                        pickArm64v8a[0] = true;
-                                }
+                            ZipFile zipFile = new ZipFile(dirZipApk);
+                            List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+                            List<String> filesToRemove = new ArrayList<String>();
+
+                            // Find arm64_v8a
+                            fileHeaders.forEach(fileHeader -> {
+                                if (Pattern.matches(".*arm64_v8a.*", fileHeader.getFileName()))
+                                    pickArm64v8a[0] = true;
                             });
 
-                            ZipUtil.unpack(apkFile, dirZipUnpack, new NameMapper() {
-                                public String map(String name) {
-                                    ChangeStateText("## Merger\n**" + finalApkName + "**\nRemoving unnecessary architecture...\n\n``" + name + "``");
+                            // Removing unnecessary architecture
+                            fileHeaders.forEach(fileHeader -> {
+                                String fileName = fileHeader.getFileName();
 
-                                    if (Pattern.matches(".*config\\.\\w{3,}(?<!dpi)\\.apk$", name)) { // is architecture file
-                                        if (Pattern.matches(".*arm64_v8a.*", name)) { // is arm64_v8a
-
-                                        } else {
-                                            if (Pattern.matches(".*armeabi_v7a.*", name)) { // is armeabi_v7a
-                                                if (pickArm64v8a[0]) // is no arm64_v8a
-                                                    return null;
-                                            } else
-                                                return null;
-                                        }
+                                if (Pattern.matches(".*config\\..{3,}(?<!dpi)\\.apk$", fileName)) { // is architecture file
+                                    if (!Pattern.matches(".*arm64_v8a.*", fileName)) { // is not arm64_v8a
+                                        if (Pattern.matches(".*armeabi_v7a.*", fileName)) { // is armeabi_v7a
+                                            if (pickArm64v8a[0]) // is no arm64_v8a
+                                                filesToRemove.add(fileName);
+                                        } else
+                                            filesToRemove.add(fileName);
                                     }
-                                    return name;
                                 }
                             });
+                            zipFile.removeFiles(filesToRemove);
 
-                            apkFile = new File(dirZipper, apkName);
-                            ZipUtil.pack(dirZipUnpack, apkFile);
+                            // Change APK target to clean file
+                            apkFile = dirZipApk;
                         }
 
                         ChangeStateText("## Merger\nMerging multiple split **" + apkName + "**...");
@@ -329,13 +334,14 @@ public class MainActivity extends AppCompatActivity {
                         executor.runCommand();
 
                         // Change APK target to merged file
+                        apkFile.delete();
                         apkName = newName;
                         apkFile = new File(dirMerger, newName);
                         dirApkOut = new File(dirOut, "Pico_" + apkName);
                         dirApkUnsing = new File(dirUnsign, apkName);
                     } catch (Exception error) {
                         if (!isCancelled()) {
-                            errorMessage = "File **" + apkName + "** is not split APK.";
+                            errorMessage = error.toString();
                             FileviewHelper.FileviewChangeText(index, "❌ " + apkFile.getPath() + " ⭕ " + error.toString());
                             progressBar.Increase(5);
                         }

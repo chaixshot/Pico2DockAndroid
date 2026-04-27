@@ -63,5 +63,5 @@ dependencies {
     implementation("com.github.TutorialsAndroid:FilePicker:v9.0.1")
     implementation("io.noties.markwon:core:4.6.2")
     implementation("com.github.patrickfav:uber-apk-signer:v1.3.0")
-    implementation("com.github.zeroturnaround:zt-zip:zt-zip-1.17")
+    implementation("com.github.srikanth-lingala:zip4j:v2.11.4")
 }
