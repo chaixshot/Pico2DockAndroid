@@ -874,7 +874,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Help");
-        builder.setMessage("⬤ Hole point any element to see its tooltip including files in the box.");
+        builder.setMessage("⬤ Hold point any element to see its tooltip including files in the box.");
 
         builder.setPositiveButton("Close", (dialog, which) -> {
             dialog.dismiss();
