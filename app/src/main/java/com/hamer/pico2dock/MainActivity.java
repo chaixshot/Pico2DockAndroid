@@ -132,19 +132,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (DoubleBack + 2000 > System.currentTimeMillis()) {
-            if (IsProcessRunning) {
-                ButtonCancel.performClick();
-                Toast.makeText(this, "Canceling process please wait...", Toast.LENGTH_SHORT).show();
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         } else {
             DoubleBack = System.currentTimeMillis();
-
-            if (IsProcessRunning)
-                Toast.makeText(this, "Press once again to Cancel", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "Press once again to Exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press once again to Exit", Toast.LENGTH_SHORT).show();
         }
     }
 
