@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 File dirUnsign = new File(dirPico2Dock, "Unsign");
                 File apkFile = new File(file);
                 String apkName = apkFile.getName(); // Including extension
-                String filePath = apkFile.getAbsolutePath().replaceAll(apkName + "$", "");
+                String filePath = apkFile.getAbsolutePath().replace(apkName, "");
                 File dirOut = new File(filePath, "Pico");
                 File dirApkOut = new File(dirOut, "Pico_" + apkName);
                 File dirApkUnsing = new File(dirUnsign, apkName);
@@ -290,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
                             Files.copy(apkFile.toPath(), dirZipApk.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                             final Boolean[] pickArm64v8a = {false};
-                            File finalApkFile = apkFile;
 
                             ZipFile zipFile = new ZipFile(dirZipApk);
                             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
@@ -630,7 +629,7 @@ public class MainActivity extends AppCompatActivity {
                         dirOut.mkdir();
 
                     // zipalign
-                    File align = new File(dirApkUnsing.getAbsolutePath().replaceAll(dirApkUnsing.getName() + "$", "") + "align_" + dirApkUnsing.getName());
+                    File align = new File(dirApkUnsing.getAbsolutePath().replace(dirApkUnsing.getName(), "") + "align_" + dirApkUnsing.getName());
                     ZipAlign.alignApk(dirApkUnsing, align);
                     dirApkUnsing.delete();
                     align.renameTo(dirApkUnsing);
