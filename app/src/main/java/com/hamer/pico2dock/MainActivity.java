@@ -149,6 +149,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        if (IsProcessRunning)
+            MainTask.cancel(true);
+        Utils.CleanupTempDir();
+
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         System.exit(0);
