@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         APKFiles = files.clone();
                         APKFilesOut = files.clone();
 
-                        FileviewHelper.FileviewApply(files);
+                        FileviewHelper.Apply(files);
                         ChangeButtonState();
                     }
                 }
@@ -194,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         IsRename = CheckboxRename.isChecked();
         IsProcessRunning = true;
 
-        FileviewHelper.FileviewClearTag();
+        FileviewHelper.ClearAllTag();
         ResetAppearance();
         ChangeButtonState();
 
@@ -207,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         APKFiles = empty;
         APKFilesOut = empty;
 
-        FileviewHelper.FileviewApply(empty);
+        FileviewHelper.Apply(empty);
 
         ChangeButtonState();
     }
@@ -254,13 +253,13 @@ public class MainActivity extends AppCompatActivity {
                 Integer index = Arrays.asList(apkFiles).indexOf(file);
 
                 //?? -------------------- [[ File indicator ]] --------------------
-                FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Working + " " + file);
-                FileviewHelper.FileviewSelect(index);
+                FileviewHelper.ChangeText(index, Utils.FileIndicator.Working + " " + file);
+                FileviewHelper.Select(index);
 
                 //?? -------------------- [[ Check file access ]] --------------------
                 if (!apkFile.exists() || !apkFile.isFile() || !apkFile.canRead()) {
                     errorMessage = "Can't access file \"" + apkFile.getPath() + "\"";
-                    FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
+                    FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
 
                     continue;
                 }
@@ -335,22 +334,27 @@ public class MainActivity extends AppCompatActivity {
                         dirApkOut = new File(dirOut, "Pico_" + apkName);
                         dirApkUnsing = new File(dirUnsign, apkName);
                     } catch (Exception error) {
-                        if (!isCancelled()) {
+                        if (isCancelled())
+                            break;
+                        else {
                             errorMessage = error.toString();
-                            FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
+                            FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                             progressBar.Increase(5);
+
+                            continue;
                         }
 
-                        continue;
                     } catch (OutOfMemoryError error) {
-                        if (!isCancelled()) {
+                        if (isCancelled())
+                            break;
+                        else {
                             errorMessage = "Out of memory";
-                            FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
+                            FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
                             progressBar.Increase(5);
-                        }
-                        cancel(true);
+                            cancel(true);
 
-                        continue;
+                            continue;
+                        }
                     }
                 }
 
@@ -381,22 +385,26 @@ public class MainActivity extends AppCompatActivity {
                     Decompiler executor = new Decompiler(options, apkName);
                     executor.runCommand();
                 } catch (Exception error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                         progressBar.Increase(4);
-                    }
 
-                    continue;
+                        continue;
+                    }
                 } catch (OutOfMemoryError error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "Out of memory";
                         FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
                         progressBar.Increase(4);
-                    }
-                    cancel(true);
+                        cancel(true);
 
-                    continue;
+                        continue;
+                    }
                 }
 
                 //?? -------------------- [[ Edit AndroidManifest.xml ]] --------------------
@@ -463,7 +471,6 @@ public class MainActivity extends AppCompatActivity {
                                 item.appendChild(vrMode.cloneNode(true));
                                 item.appendChild(layout.cloneNode(true));
 
-                                item.setAttributeNS(android, "android:taskAffinity", ":unityActivity");
                                 item.setAttributeNS(android, "android:resizeableActivity", "true");
                                 if (isMainActivity)
                                     item.setAttributeNS(android, "android:screenOrientation", isPortrait ? "portrait" : "landscape");
@@ -653,13 +660,15 @@ public class MainActivity extends AppCompatActivity {
                     transManifest.setOutputProperty(OutputKeys.INDENT, "yes");
                     transManifest.transform(new DOMSource(xmlDoc), new StreamResult(xmlFile));
                 } catch (Exception error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "```\n" + error.toString() + "\n```";
-                        FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
+                        FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                         progressBar.Increase(3);
-                    }
 
-                    continue;
+                        continue;
+                    }
                 }
 
                 //?? -------------------- [[ Start compiler apk ]] --------------------
@@ -678,22 +687,26 @@ public class MainActivity extends AppCompatActivity {
                     Compiler executor = new Compiler(options, apkName);
                     executor.runCommand();
                 } catch (Exception error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "```\n" + error.toString() + "\n```";
-                        FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
+                        FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                         progressBar.Increase(2);
-                    }
 
-                    continue;
+                        continue;
+                    }
                 } catch (OutOfMemoryError error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "Out of memory";
-                        FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
+                        FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
                         progressBar.Increase(2);
-                    }
-                    cancel(true);
+                        cancel(true);
 
-                    continue;
+                        continue;
+                    }
                 }
 
                 //?? -------------------- [[ Start signing apk ]] --------------------
@@ -727,17 +740,19 @@ public class MainActivity extends AppCompatActivity {
                     File idsig = new File(dirApkOut, ".idsig");
                     idsig.delete();
                 } catch (Exception error) {
-                    if (!isCancelled()) {
+                    if (isCancelled())
+                        break;
+                    else {
                         errorMessage = "```\n" + error.toString() + "\n```";
-                        FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
+                        FileviewHelper.ChangeText(index, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                         progressBar.Increase(1);
-                    }
 
-                    continue;
+                        continue;
+                    }
                 }
 
                 progressBar.Increase(null);
-                FileviewHelper.FileviewChangeText(index, Utils.FileIndicator.Success + " " + file);
+                FileviewHelper.ChangeText(index, Utils.FileIndicator.Success + " " + file);
                 APKFilesOut[index] = dirApkOut.getPath();
             }
 
@@ -860,7 +875,7 @@ public class MainActivity extends AppCompatActivity {
         String apkPath = APKFiles[info.position];
         String apkOutPath = APKFilesOut[info.position];
 
-        File apkFile = new File(apkPath.replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", ""));
+        File apkFile = new File(Utils.FileIndicator.ClearTag(apkPath));
         File apkOutFile = new File(apkOutPath);
 
         Boolean isConverted = apkPath.contains(Utils.FileIndicator.Success) && apkOutFile.exists();
@@ -908,13 +923,9 @@ public class MainActivity extends AppCompatActivity {
                 builder.setMessage(apkTargetFile.getPath());
 
                 builder.setPositiveButton("YES", (dialog, which) -> {
-                    List<String> list = new ArrayList<String>(Arrays.asList(APKFiles));
-                    list.remove(info.position);
-                    APKFiles = list.toArray(new String[0]);
+                    FileviewHelper.RemoveByIndex(info.position);
 
-                    FileviewHelper.FileviewApply(APKFiles);
                     ChangeButtonState();
-
                     dialog.dismiss();
                 }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
             }
@@ -925,12 +936,10 @@ public class MainActivity extends AppCompatActivity {
                 builder.setMessage(apkTargetFile.getPath());
 
                 builder.setPositiveButton("YES", (dialog, which) -> {
-                    if (!isConverted) {
-                        List<String> list = new ArrayList<String>(Arrays.asList(APKFiles));
-                        list.remove(info.position);
-                        APKFiles = list.toArray(new String[0]);
-                        FileviewHelper.FileviewApply(APKFiles);
-                    }
+                    if (isConverted)
+                        FileviewHelper.ClearTag(info.position);
+                    else
+                        FileviewHelper.RemoveByIndex(info.position);
 
                     ChangeButtonState();
                     apkTargetFile.delete();

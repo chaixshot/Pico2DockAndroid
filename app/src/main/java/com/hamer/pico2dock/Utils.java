@@ -91,5 +91,9 @@ public class Utils {
         public static String Success = "✅";
         public static String Error = "❌";
         public static String ErrorInfo = "⭕";
+
+        public static String ClearTag(String text) {
+            return text.replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
+        }
     }
 }

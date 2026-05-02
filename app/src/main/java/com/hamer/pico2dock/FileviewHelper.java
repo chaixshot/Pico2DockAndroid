@@ -4,10 +4,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class FileviewHelper {
     static MainActivity mainActivity = MainActivity.getInstance();
 
-    public static void FileviewApply(String[] files) {
+    public static void Apply(String[] files) {
         ListView fileView = (ListView) mainActivity.findViewById(R.id.ListViewFiles);
 
         mainActivity.registerForContextMenu(fileView);
@@ -17,7 +21,7 @@ public class FileviewHelper {
         fileView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
-    public static void FileviewSelect(Integer index) {
+    public static void Select(Integer index) {
         ListView fileView = (ListView) mainActivity.findViewById(R.id.ListViewFiles);
 
         mainActivity.runOnUiThread(new Runnable() {
@@ -28,17 +32,17 @@ public class FileviewHelper {
         });
     }
 
-    public static void FileviewChangeText(Integer index, String text) {
+    public static void ChangeText(Integer index, String text) {
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mainActivity.APKFiles[index] = text;
-                FileviewApply(mainActivity.APKFiles);
+                Apply(mainActivity.APKFiles);
             }
         });
     }
 
-    public static void FileviewClearTag() {
+    public static void ClearAllTag() {
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -51,7 +55,34 @@ public class FileviewHelper {
                     index++;
                 }
 
-                FileviewApply(mainActivity.APKFiles);
+                Apply(mainActivity.APKFiles);
+            }
+        });
+    }
+
+    public static void ClearTag(Integer index) {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.APKFiles[index] = mainActivity.APKFiles[index].replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
+                Apply(mainActivity.APKFiles);
+            }
+        });
+    }
+
+    public static void RemoveByIndex(int index) {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                List<String> _listAPKFiles = new ArrayList<String>(Arrays.asList(mainActivity.APKFiles));
+                _listAPKFiles.remove(index);
+                mainActivity.APKFiles = _listAPKFiles.toArray(new String[0]);
+
+                List<String> _APKFilesOut = new ArrayList<String>(Arrays.asList(mainActivity.APKFilesOut));
+                _APKFilesOut.remove(index);
+                mainActivity.APKFilesOut = _APKFilesOut.toArray(new String[0]);
+
+                Apply(mainActivity.APKFiles);
             }
         });
     }
