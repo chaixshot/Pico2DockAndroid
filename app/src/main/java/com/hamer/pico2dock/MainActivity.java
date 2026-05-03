@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         APKFiles = files.clone();
                         APKFilesOut = files.clone();
 
-                        FileviewHelper.Apply(files);
+                        FileviewHelper.Apply();
                         ChangeButtonState();
                     }
                 }
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         APKFiles = empty;
         APKFilesOut = empty;
 
-        FileviewHelper.Apply(empty);
+        FileviewHelper.Apply();
 
         ChangeButtonState();
     }
