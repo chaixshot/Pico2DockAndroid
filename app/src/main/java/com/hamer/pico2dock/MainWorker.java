@@ -231,12 +231,21 @@ public class MainWorker extends Worker {
                 if (!dirMerger.exists()) dirMerger.mkdirs();
                 File dirZipper = new File(dirPico2Dock, "Zipper");
                 if (!dirZipper.exists()) dirZipper.mkdirs();
-                File dirZipApk = new File(dirZipper, apkName);
+                
+                // Copy to Zipper directory first so library uses our path for extraction
+                File dirZipApk = new File(dirZipper, "temp_" + apkName);
+                progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nPreparing temporary files...", -1));
+                try {
+                    Utils.FastCopy(apkFile, dirZipApk);
+                    apkFile = dirZipApk;
+                } catch (Exception e) {
+                    Log.e("Pico2Dock", "Failed to copy to temp", e);
+                }
 
                 progressBar.Increase(null);
 
                 try {
-                    // Optimization: Check if architecture removal is actually needed before copying/modifying
+                    // Optimization: Check if architecture removal is actually needed
                     progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nAnalyzing architectures...", -1));
                     
                     List<String> filesToRemove = new ArrayList<>();
@@ -265,14 +274,9 @@ public class MainWorker extends Worker {
 
                     if (!filesToRemove.isEmpty()) {
                         progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...", -1));
-                        
-                        if (!dirZipApk.exists()) dirZipApk.createNewFile();
-                        Utils.FastCopy(apkFile, dirZipApk);
-                        
-                        try (ZipFile zipFile = new ZipFile(dirZipApk)) {
+                        try (ZipFile zipFile = new ZipFile(apkFile)) {
                             zipFile.removeFiles(filesToRemove);
                         }
-                        apkFile = dirZipApk;
                     }
 
                     progressManager.postUpdate(ProcessUpdate.progress("## Merger\nMerging multiple split **" + apkName + "**...", -1));
@@ -285,7 +289,8 @@ public class MainWorker extends Worker {
                     Merger executor = new Merger(options, apkName, this::isStopped);
                     executor.runCommand();
 
-                    if (apkFile.equals(dirZipApk)) {
+                    // Delete temp apkm/xapk file
+                    if (apkFile.exists()) {
                         apkFile.delete();
                     }
                     

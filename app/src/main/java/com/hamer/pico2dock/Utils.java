@@ -80,6 +80,8 @@ public class Utils {
 
     public static void CleanupWorkerDir() {
         CleanupDir("storage/emulated/0/Pico2Dock/Worker");
+        CleanupDir("storage/emulated/0/Pico2Dock/Zipper");
+        CleanupDir("storage/emulated/0/Pico2Dock/Merger");
     }
 
     public static void PlayAlertSound(Context context) {
