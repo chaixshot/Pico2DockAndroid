@@ -9,7 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
+import android.os.PowerManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.ContextMenu;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     Button ButtonStart;
     Button ButtonCancel;
     Button ButtonClear;
+    Button ButtonBattery;
     TextView TextViewSelectHint;
     Switch SwtichHideDock;
     CheckBox CheckboxRePackage;
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         PercentText = (TextView) findViewById(R.id.PercentText);
         TextRename = (EditText) findViewById(R.id.TextRename);
         CheckboxRename = (CheckBox) findViewById(R.id.CheckboxRename);
+        ButtonBattery = (Button) findViewById(R.id.ButtonBattery);
 
         ResetAppearance();
         ChangeButtonState();
@@ -176,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
                 FileviewHelper.Apply(MainActivity.this, files);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ChangeButtonState();
     }
 
     @Override
@@ -275,6 +284,19 @@ public class MainActivity extends AppCompatActivity {
         view.setEnabled(false);
     }
 
+    public void RequestBatteryOptimization(View view) {
+        Intent intent = new Intent();
+        String packageName = getPackageName();
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(Uri.parse("package:" + packageName));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Battery optimization is already disabled.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
     //** UI
@@ -304,6 +326,15 @@ public class MainActivity extends AppCompatActivity {
         CheckboxRePackageAdv.setEnabled(!IsProcessRunning);
         TextRename.setEnabled(!IsProcessRunning);
         CheckboxRename.setEnabled(!IsProcessRunning);
+
+        if (ButtonBattery != null) {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (pm != null && pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                ButtonBattery.setVisibility(View.GONE);
+            } else {
+                ButtonBattery.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void ChangeStateText(String text) {
