@@ -14,12 +14,13 @@ public class Merger extends com.reandroid.apkeditor.merge.Merger {
     }
 
     private void updateStatus(String msg) {
-        if (!cancellationCheck.get()) {
-            ProgressManager.getInstance().postUpdate(new ProcessUpdate(
-                "## Merger\nMerging multiple split **" + apkName + "**...\n\n``" + msg + "``",
-                -1, null, false, false
-            ));
+        if (cancellationCheck.get()) {
+            throw new RuntimeException("Operation cancelled by user");
         }
+        ProgressManager.getInstance().postUpdate(new ProcessUpdate(
+            "## Merger\nMerging multiple split **" + apkName + "**...\n\n``" + msg + "``",
+            -1, null, false, false
+        ));
     }
 
     @Override

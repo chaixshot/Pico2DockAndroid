@@ -65,6 +65,7 @@ public class MainWorker extends Worker {
 
     private volatile String errorMessage;
     private final ProgressManager progressManager = ProgressManager.getInstance();
+    private Thread signerThread;
 
     public MainWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -124,12 +125,12 @@ public class MainWorker extends Worker {
         File keystore = Utils.GetKeystoreFile(getApplicationContext());
 
         BlockingQueue<SignTask> signQueue = new LinkedBlockingQueue<>();
-        Thread signerThread = new Thread(() -> {
+        signerThread = new Thread(() -> {
             try {
                 while (true) {
                     SignTask task = signQueue.take();
                     if (task.isSentinel()) break;
-                    if (isStopped()) break;
+                    if (isStopped()) break; // if stopped, don't start the next sign task
                     
                     // Priority: If a sign task is ready, we want it done ASAP to free up the pipeline
                     Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
@@ -142,6 +143,8 @@ public class MainWorker extends Worker {
 
                         File align = new File(task.dirApkUnsing.getAbsolutePath().replace(task.dirApkUnsing.getName(), "") + "align_" + task.dirApkUnsing.getName());
                         ZipAlign.alignApk(task.dirApkUnsing, align);
+                        if (isStopped()) break;
+                        
                         task.dirApkUnsing.delete();
                         align.renameTo(task.dirApkUnsing);
 
@@ -157,6 +160,8 @@ public class MainWorker extends Worker {
                                 "--out", task.dirApkOut.getPath(),
                         };
                         ApkSignerTool.main(arg);
+                        if (isStopped()) break;
+
                         File idsig = new File(task.dirApkOut.getAbsolutePath() + ".idsig");
                         if (idsig.exists()) idsig.delete();
 
@@ -166,6 +171,7 @@ public class MainWorker extends Worker {
                         task.progressBar.Increase(null);
                         FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Success + " " + task.originalFile);
                     } catch (Exception error) {
+                        if (isStopped()) break;
                         Log.e("Pico2Dock", "Signing error", error);
                         errorMessage = "```\n" + error.toString() + "\n```";
                         FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Error + " " + task.dirApkUnsing.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
@@ -551,13 +557,18 @@ public class MainWorker extends Worker {
         // Signal Signer Thread to finish
         try {
             signQueue.put(SignTask.sentinel());
-            signerThread.join();
+            if (!isStopped()) {
+                signerThread.join();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
+        if (isStopped()) return Result.success();
+
         Utils.CleanupTempDir();
-        if (errorMessage != null && !errorMessage.isEmpty()) {
+        boolean isSuccess = (errorMessage == null || errorMessage.isEmpty());
+        if (!isSuccess) {
             progressManager.postUpdate(ProcessUpdate.error(errorMessage));
         } else {
             progressManager.postUpdate(ProcessUpdate.success());
@@ -574,6 +585,9 @@ public class MainWorker extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
+        if (signerThread != null && signerThread.isAlive()) {
+            signerThread.interrupt();
+        }
         Utils.CleanupTempDir();
         progressManager.postUpdate(ProcessUpdate.cancelled());
     }

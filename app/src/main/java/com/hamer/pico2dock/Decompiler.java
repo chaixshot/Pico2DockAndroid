@@ -14,12 +14,13 @@ public class Decompiler extends com.reandroid.apkeditor.decompile.Decompiler {
     }
 
     private void updateStatus(String msg) {
-        if (!cancellationCheck.get()) {
-            ProgressManager.getInstance().postUpdate(new ProcessUpdate(
-                "## Decoder\nDecompiling **" + apkName + "**...\n\n``" + msg + "``",
-                -1, null, false, false
-            ));
+        if (cancellationCheck.get()) {
+            throw new RuntimeException("Operation cancelled by user");
         }
+        ProgressManager.getInstance().postUpdate(new ProcessUpdate(
+            "## Decoder\nDecompiling **" + apkName + "**...\n\n``" + msg + "``",
+            -1, null, false, false
+        ));
     }
 
     @Override
