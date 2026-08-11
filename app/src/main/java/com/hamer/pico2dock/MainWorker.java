@@ -130,6 +130,9 @@ public class MainWorker extends Worker {
                     SignTask task = signQueue.take();
                     if (task.isSentinel()) break;
                     if (isStopped()) break;
+                    
+                    // Priority: If a sign task is ready, we want it done ASAP to free up the pipeline
+                    Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
                     try {
                         progressManager.postUpdate(ProcessUpdate.progress("## Signer\nSigning **" + task.apkName + "**", -1));
@@ -197,7 +200,9 @@ public class MainWorker extends Worker {
             File dirPico2Dock = new File("storage/emulated/0/Pico2Dock");
             File dirWorker = new File(dirPico2Dock, "Worker");
             File dirUnsign = new File(dirPico2Dock, "Unsign");
-            if (!dirUnsign.exists()) dirUnsign.mkdirs();
+            if (!dirUnsign.exists() && !dirUnsign.mkdirs()) {
+                Log.e("Pico2Dock", "Failed to create Unsign directory");
+            }
 
             File apkFile = new File(file);
             String apkName = apkFile.getName();
@@ -231,37 +236,42 @@ public class MainWorker extends Worker {
                 progressBar.Increase(null);
 
                 try {
-                    if (true) {
-                        progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...", -1));
-
-                        if (!dirZipApk.exists())
-                            dirZipApk.createNewFile();
-
-                        Utils.FastCopy(apkFile, dirZipApk);
-
-                        final Boolean[] pickArm64v8a = {false};
-                        ZipFile zipFile = new ZipFile(dirZipApk);
+                    // Optimization: Check if architecture removal is actually needed before copying/modifying
+                    progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nAnalyzing architectures...", -1));
+                    
+                    List<String> filesToRemove = new ArrayList<>();
+                    boolean pickArm64v8a = false;
+                    
+                    try (ZipFile zipFile = new ZipFile(apkFile)) {
                         List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-                        List<String> filesToRemove = new ArrayList<String>();
-
-                        fileHeaders.forEach(fileHeader -> {
-                            if (Pattern.matches(".*arm64_v8a.*", fileHeader.getFileName()))
-                                pickArm64v8a[0] = true;
-                        });
-
-                        fileHeaders.forEach(fileHeader -> {
-                            String fileName = fileHeader.getFileName();
+                        for (FileHeader header : fileHeaders) {
+                            if (Pattern.matches(".*arm64_v8a.*", header.getFileName())) {
+                                pickArm64v8a = true;
+                                break;
+                            }
+                        }
+                        
+                        for (FileHeader header : fileHeaders) {
+                            String fileName = header.getFileName();
                             if (Pattern.matches(".*config\\..{3,}(?<!dpi)\\.apk$", fileName)) {
                                 if (!Pattern.matches(".*arm64_v8a.*", fileName)) {
-                                    if (Pattern.matches(".*armeabi_v7a.*", fileName)) {
-                                        if (pickArm64v8a[0])
-                                            filesToRemove.add(fileName);
-                                    } else
+                                    if (!Pattern.matches(".*armeabi_v7a.*", fileName) || pickArm64v8a) {
                                         filesToRemove.add(fileName);
+                                    }
                                 }
                             }
-                        });
-                        zipFile.removeFiles(filesToRemove);
+                        }
+                    }
+
+                    if (!filesToRemove.isEmpty()) {
+                        progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...", -1));
+                        
+                        if (!dirZipApk.exists()) dirZipApk.createNewFile();
+                        Utils.FastCopy(apkFile, dirZipApk);
+                        
+                        try (ZipFile zipFile = new ZipFile(dirZipApk)) {
+                            zipFile.removeFiles(filesToRemove);
+                        }
                         apkFile = dirZipApk;
                     }
 
@@ -275,7 +285,10 @@ public class MainWorker extends Worker {
                     Merger executor = new Merger(options, apkName, this::isStopped);
                     executor.runCommand();
 
-                    apkFile.delete();
+                    if (apkFile.equals(dirZipApk)) {
+                        apkFile.delete();
+                    }
+                    
                     apkName = newName;
                     apkFile = new File(dirMerger, newName);
                     dirApkOut = new File(dirOut, "Pico_" + apkName);
@@ -459,31 +472,33 @@ public class MainWorker extends Worker {
                         application.setAttributeNS(android, "android:label", app_label + namePrefix);
                     } else {
                         String stringID = app_label.replace("@string/", "");
-                        try (Stream<Path> paths = Files.walk(Paths.get(dirWorker.getPath(), "resources"))) {
-                            paths.parallel()
-                                    .filter(p -> p.getParent().getFileName().toString().startsWith("values") && 
-                                                 p.getFileName().toString().equals("strings.xml"))
-                                    .forEach(path -> {
-                                try {
-                                    File stringXml = path.toFile();
-                                    Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stringXml);
-                                    NodeList tags = doc.getElementsByTagName("string");
-                                    boolean modified = false;
-                                    for (int k = 0; k < tags.getLength(); k++) {
-                                        Element el = (Element) tags.item(k);
-                                        if (el.getAttribute("name").equals(stringID)) {
-                                            el.setTextContent(el.getTextContent() + namePrefix);
-                                            modified = true;
-                                            break;
+                        // Optimization: Targeted scan. Only check subdirectories of 'resources' that start with 'values'
+                        File resDir = new File(dirWorker, "resources");
+                        File[] subDirs = resDir.listFiles(f -> f.isDirectory() && f.getName().startsWith("values"));
+                        if (subDirs != null) {
+                            Arrays.stream(subDirs).parallel().forEach(dir -> {
+                                File stringXml = new File(dir, "strings.xml");
+                                if (stringXml.exists()) {
+                                    try {
+                                        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stringXml);
+                                        NodeList tags = doc.getElementsByTagName("string");
+                                        boolean modified = false;
+                                        for (int k = 0; k < tags.getLength(); k++) {
+                                            Element el = (Element) tags.item(k);
+                                            if (el.getAttribute("name").equals(stringID)) {
+                                                el.setTextContent(el.getTextContent() + namePrefix);
+                                                modified = true;
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if (modified) {
-                                        Transformer tf = TransformerFactory.newInstance().newTransformer();
-                                        tf.transform(new DOMSource(doc), new StreamResult(stringXml));
-                                    }
-                                } catch (Exception ignored) {}
+                                        if (modified) {
+                                            Transformer tf = transformerFactory.newTransformer();
+                                            tf.transform(new DOMSource(doc), new StreamResult(stringXml));
+                                        }
+                                    } catch (Exception ignored) {}
+                                }
                             });
-                        } catch (Exception ignored) {}
+                        }
                     }
                 }
 
