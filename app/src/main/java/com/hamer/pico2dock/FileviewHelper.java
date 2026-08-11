@@ -1,5 +1,6 @@
 package com.hamer.pico2dock;
 
+import android.app.Activity;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -9,26 +10,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FileviewHelper {
-    static MainActivity mainActivity = MainActivity.getInstance();
-    static ListView fileView = (ListView) mainActivity.findViewById(R.id.ListViewFiles);
 
-    public static void Apply() {
-        mainActivity.runOnUiThread(new Runnable() {
+    public static void Apply(Activity activity, String[] apkFiles) {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mainActivity.registerForContextMenu(fileView);
+                ListView fileView = (ListView) activity.findViewById(R.id.ListViewFiles);
+                activity.registerForContextMenu(fileView);
 
-                ListAdapter myAdapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_activated_1, mainActivity.APKFiles);
+                ListAdapter myAdapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_activated_1, apkFiles);
                 fileView.setAdapter(myAdapter);
                 fileView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             }
         });
     }
 
-    public static void Select(Integer index) {
-        mainActivity.runOnUiThread(new Runnable() {
+    public static void Select(Activity activity, Integer index) {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                ListView fileView = (ListView) activity.findViewById(R.id.ListViewFiles);
                 fileView.setItemChecked(index, true);
                 fileView.smoothScrollToPosition(index + 1);
             }
@@ -36,38 +37,38 @@ public class FileviewHelper {
     }
 
     public static void ChangeText(Integer index, String text) {
-        mainActivity.APKFiles[index] = text;
-
-        Apply();
+        ProgressManager.getInstance().updateFileStatus(index, text);
     }
 
     public static void ClearAllTag() {
-        Integer index = 0;
+        String[] apkFiles = ProgressManager.getInstance().getApkFiles();
+        if (apkFiles == null) return;
 
-        for (String path : mainActivity.APKFiles) {
-            mainActivity.APKFiles[index] = path.replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
-
-            index++;
+        for (int i = 0; i < apkFiles.length; i++) {
+            apkFiles[i] = apkFiles[i].replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
         }
 
-        Apply();
+        ProgressManager.getInstance().setApkFiles(apkFiles);
     }
 
     public static void ClearTag(Integer index) {
-        mainActivity.APKFiles[index] = mainActivity.APKFiles[index].replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
+        String[] apkFiles = ProgressManager.getInstance().getApkFiles();
+        if (apkFiles == null || index < 0 || index >= apkFiles.length) return;
 
-        Apply();
+        apkFiles[index] = apkFiles[index].replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
+
+        ProgressManager.getInstance().setApkFiles(apkFiles);
     }
 
     public static void RemoveByIndex(int index) {
-        List<String> _listAPKFiles = new ArrayList<String>(Arrays.asList(mainActivity.APKFiles));
+        String[] apkFiles = ProgressManager.getInstance().getApkFiles();
+        if (apkFiles == null || index < 0 || index >= apkFiles.length) return;
+
+        List<String> _listAPKFiles = new ArrayList<String>(Arrays.asList(apkFiles));
         _listAPKFiles.remove(index);
-        mainActivity.APKFiles = _listAPKFiles.toArray(new String[0]);
-
-        List<String> _APKFilesOut = new ArrayList<String>(Arrays.asList(mainActivity.APKFilesOut));
-        _APKFilesOut.remove(index);
-        mainActivity.APKFilesOut = _APKFilesOut.toArray(new String[0]);
-
-        Apply();
+        ProgressManager.getInstance().setApkFiles(_listAPKFiles.toArray(new String[0]));
+        
+        // Note: MainActivity.APKFilesOut also needs to be synced if we were using it there, 
+        // but for now we focus on the UI/ProgressManager integration.
     }
 }

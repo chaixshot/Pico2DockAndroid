@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.cardview)
+    implementation(libs.work.runtime)
     implementation(files("../libs/APKEditor-1.4.8.jar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

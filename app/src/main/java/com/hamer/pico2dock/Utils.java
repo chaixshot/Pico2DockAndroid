@@ -1,8 +1,10 @@
 package com.hamer.pico2dock;
 
-import static android.view.View.VISIBLE;
-
+import android.content.Context;
 import android.content.res.Resources;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
@@ -12,12 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Utils {
-    static MainActivity mainActivity = MainActivity.getInstance();
 
-    public static File GetKeystoreFile() {
+    public static File GetKeystoreFile(Context context) {
         File keystore;
 
-        Resources resources = mainActivity.getResources();
+        Resources resources = context.getResources();
         try {
             // Open the audio file from the raw folder
             InputStream inputStream = resources.openRawResource(R.raw.keystore);
@@ -26,7 +27,7 @@ public class Utils {
             inputStream.close();
 
             // Create a new File Object
-            keystore = new File(mainActivity.getExternalFilesDir(null), "keystore.jks");
+            keystore = new File(context.getExternalFilesDir(null), "keystore.jks");
             FileOutputStream outputStream = new FileOutputStream(keystore);
             outputStream.write(bytes);
             outputStream.close();
@@ -43,16 +44,16 @@ public class Utils {
 
         if (file.isDirectory()) {
             String[] children = file.list();
-            for (String child : children) {
-                CleanupDir(path + "/" + child);
+            if (children != null) {
+                for (String child : children) {
+                    CleanupDir(path + "/" + child);
+                }
             }
         }
         file.delete();
     }
 
     public static void CleanupTempDir() {
-        mainActivity.ChangeStateText("## Current Status\nCleaning directory...");
-
         CleanupDir("storage/emulated/0/Pico2Dock/Worker");
         CleanupDir("storage/emulated/0/Pico2Dock/Unsign");
         CleanupDir("storage/emulated/0/Pico2Dock/Apkm");
@@ -62,8 +63,8 @@ public class Utils {
     }
 
     public static class ProgressBar {
-        public Double Files;
-        public Double Step;
+        public double Files;
+        public double Step;
 
         public ProgressBar(double files, double step) {
             this.Files = files;
@@ -74,15 +75,8 @@ public class Utils {
             if (mul == null)
                 mul = 1;
 
-            Integer finalMul = mul;
-            mainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mainActivity.StatusProgressBar.setVisibility(VISIBLE);
-                    mainActivity.StatusProgressBar.incrementProgressBy((int) Math.round(((100 / Step) * finalMul) / Files));
-                    mainActivity.PercentText.setText(mainActivity.StatusProgressBar.getProgress() + "%");
-                }
-            });
+            int increment = (int) Math.round(((100 / Step) * mul) / Files);
+            ProgressManager.getInstance().incrementProgress(increment);
         }
     }
 

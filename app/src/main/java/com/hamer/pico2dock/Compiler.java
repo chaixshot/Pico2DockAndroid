@@ -1,62 +1,60 @@
 package com.hamer.pico2dock;
 
 import com.reandroid.apkeditor.compile.BuildOptions;
+import java.util.function.Supplier;
 
 public class Compiler extends com.reandroid.apkeditor.compile.Builder {
     String apkName;
-    static MainActivity mainActivity = MainActivity.getInstance();
+    Supplier<Boolean> cancellationCheck;
 
-    public Compiler(BuildOptions options, String name) {
+    public Compiler(BuildOptions options, String name, Supplier<Boolean> cancellationCheck) {
         super(options);
+        this.apkName = name;
+        this.cancellationCheck = cancellationCheck;
+    }
 
-        apkName = name;
+    private void updateStatus(String msg) {
+        if (!cancellationCheck.get()) {
+            ProgressManager.getInstance().postUpdate(new ProcessUpdate(
+                "## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``",
+                -1, null, false, false
+            ));
+        }
     }
 
     @Override
     public void logMessage(String msg) {
         super.logMessage(msg);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 
     @Override
     public void logMessage(String tag, String msg) {
         super.logMessage(tag, msg);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 
     @Override
     public void logVerbose(String msg) {
         super.logVerbose(msg);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 
     @Override
     public void logVerbose(String tag, String msg) {
         super.logVerbose(tag, msg);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 
     @Override
     public void logError(String msg, Throwable tr) {
         super.logError(msg, tr);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Encoder\nBuilding **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 
     @Override
     public void logWarn(String msg) {
         super.logWarn(msg);
-
-        if (!mainActivity.MainTask.isCancelled())
-            mainActivity.ChangeStateText("## Current Statu\nCompiling **" + apkName + "**...\n\n``" + msg + "``");
+        updateStatus(msg);
     }
 }
