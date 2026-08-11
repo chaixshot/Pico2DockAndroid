@@ -460,6 +460,11 @@ public class MainWorker extends Worker {
             progressManager.postUpdate(ProcessUpdate.success());
         }
 
+        Utils.PlayAlertSound(getApplicationContext());
+        try {
+            Thread.sleep(2000); // Wait longer for the 1.5s sound
+        } catch (InterruptedException ignored) {}
+
         return Result.success();
     }
 

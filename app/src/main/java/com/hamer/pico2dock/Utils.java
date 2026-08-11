@@ -2,9 +2,13 @@ package com.hamer.pico2dock;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.media.Ringtone;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.media.ToneGenerator;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -62,6 +66,17 @@ public class Utils {
         CleanupDir("storage/emulated/0/Pico2Dock");
     }
 
+    public static void PlayAlertSound(Context context) {
+        try {
+            // Using STREAM_MUSIC at max volume (100)
+            ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+            // TONE_DTMF_D is a high-frequency loud tone, playing for 1.5 seconds
+            tg.startTone(ToneGenerator.TONE_DTMF_D, 1500);
+        } catch (Exception e) {
+            Log.e("Pico2Dock", "Error playing ToneGenerator sound", e);
+        }
+    }
+
     public static class ProgressBar {
         public double Files;
         public double Step;
@@ -78,7 +93,7 @@ public class Utils {
             int increment = (int) Math.round(((100 / Step) * mul) / Files);
             ProgressManager.getInstance().incrementProgress(increment);
         }
-    }
+    } 
 
     public static class FileIndicator {
         public static  String Working = "🛠️";
