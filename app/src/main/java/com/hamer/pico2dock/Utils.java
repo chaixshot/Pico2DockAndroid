@@ -78,6 +78,10 @@ public class Utils {
         CleanupDir("storage/emulated/0/Pico2Dock");
     }
 
+    public static void CleanupWorkerDir() {
+        CleanupDir("storage/emulated/0/Pico2Dock/Worker");
+    }
+
     public static void PlayAlertSound(Context context) {
         try {
             // Using STREAM_MUSIC at max volume (100)

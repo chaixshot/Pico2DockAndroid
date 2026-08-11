@@ -63,7 +63,7 @@ public class MainWorker extends Worker {
         documentBuilderFactory.setNamespaceAware(true);
     }
 
-    private String errorMessage;
+    private volatile String errorMessage;
     private final ProgressManager progressManager = ProgressManager.getInstance();
 
     public MainWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -157,6 +157,9 @@ public class MainWorker extends Worker {
                         File idsig = new File(task.dirApkOut.getAbsolutePath() + ".idsig");
                         if (idsig.exists()) idsig.delete();
 
+                        // Clean up the unsigned file after successful signing
+                        if (task.dirApkUnsing.exists()) task.dirApkUnsing.delete();
+
                         task.progressBar.Increase(null);
                         FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Success + " " + task.originalFile);
                     } catch (Exception error) {
@@ -177,7 +180,9 @@ public class MainWorker extends Worker {
             String file = apkFiles[i];
             
             if (isStopped()) {
-                signQueue.offer(SignTask.sentinel());
+                try {
+                    signQueue.put(SignTask.sentinel());
+                } catch (InterruptedException ignored) {}
                 break;
             }
 
@@ -185,13 +190,15 @@ public class MainWorker extends Worker {
                 continue;
 
             progressManager.postUpdate(ProcessUpdate.progress("## Current Status\nCleaning directory...", -1));
-            Utils.CleanupTempDir();
+            Utils.CleanupWorkerDir();
 
             errorMessage = "";
 
             File dirPico2Dock = new File("storage/emulated/0/Pico2Dock");
             File dirWorker = new File(dirPico2Dock, "Worker");
             File dirUnsign = new File(dirPico2Dock, "Unsign");
+            if (!dirUnsign.exists()) dirUnsign.mkdirs();
+
             File apkFile = new File(file);
             String apkName = apkFile.getName();
             String filePath = apkFile.getAbsolutePath().replace(apkName, "");
@@ -216,7 +223,9 @@ public class MainWorker extends Worker {
             if (Pattern.matches(".*\\.(xapk|apkm|apks)", file)) {
                 if (isStopped()) break;
                 File dirMerger = new File(dirPico2Dock, "Merger");
+                if (!dirMerger.exists()) dirMerger.mkdirs();
                 File dirZipper = new File(dirPico2Dock, "Zipper");
+                if (!dirZipper.exists()) dirZipper.mkdirs();
                 File dirZipApk = new File(dirZipper, apkName);
 
                 progressBar.Increase(null);
@@ -511,12 +520,17 @@ public class MainWorker extends Worker {
             }
 
             // Hand off to Signer Thread
-            signQueue.offer(new SignTask(dirApkUnsing, dirApkOut, dirOut, i, file, apkName, progressBar, keystore));
+            try {
+                signQueue.put(new SignTask(dirApkUnsing, dirApkOut, dirOut, i, file, apkName, progressBar, keystore));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
 
         // Signal Signer Thread to finish
-        signQueue.offer(SignTask.sentinel());
         try {
+            signQueue.put(SignTask.sentinel());
             signerThread.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
