@@ -192,7 +192,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (DoubleBack + 2000 > System.currentTimeMillis()) {
-            super.onBackPressed();
+            if (IsProcessRunning) {
+                    Toast.makeText(this, "You have to cancel the process before exiting", Toast.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+                System.exit(0);
+            }
         } else {
             DoubleBack = System.currentTimeMillis();
             Toast.makeText(this, "Press once again to Exit", Toast.LENGTH_SHORT).show();
