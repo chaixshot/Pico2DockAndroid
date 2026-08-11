@@ -32,8 +32,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
@@ -264,6 +266,10 @@ public class MainActivity extends AppCompatActivity {
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MainWorker.class)
                 .addTag("MainWorkerTask")
                 .setInputData(inputData)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setConstraints(new Constraints.Builder()
+                        .setRequiresStorageNotLow(true)
+                        .build())
                 .build();
 
         WorkManager.getInstance(this).enqueue(workRequest);

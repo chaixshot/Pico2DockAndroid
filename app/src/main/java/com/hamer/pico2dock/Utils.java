@@ -13,11 +13,23 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
 public class Utils {
+
+    /**
+     * Optimizes file copying using NIO Channels (Zero-Copy)
+     */
+    public static void FastCopy(File source, File dest) throws IOException {
+        try (FileChannel sourceChannel = new FileInputStream(source).getChannel();
+             FileChannel destChannel = new FileOutputStream(dest).getChannel()) {
+            destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+        }
+    }
 
     public static File GetKeystoreFile(Context context) {
         File keystore;

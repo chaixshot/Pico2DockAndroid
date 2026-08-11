@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -30,6 +31,9 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -52,11 +56,51 @@ public class MainWorker extends Worker {
     private static final String CHANNEL_ID = "Pico2Dock_Process";
     private static final int NOTIFICATION_ID = 1;
 
+    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+    static {
+        documentBuilderFactory.setNamespaceAware(true);
+    }
+
     private String errorMessage;
     private final ProgressManager progressManager = ProgressManager.getInstance();
 
     public MainWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+    }
+
+    private static class SignTask {
+        final File dirApkUnsing;
+        final File dirApkOut;
+        final File dirOut;
+        final int index;
+        final String originalFile;
+        final String apkName;
+        final Utils.ProgressBar progressBar;
+        final File keystore;
+        final boolean isSentinel;
+
+        SignTask(File dirApkUnsing, File dirApkOut, File dirOut, int index, String originalFile, String apkName, Utils.ProgressBar progressBar, File keystore) {
+            this.dirApkUnsing = dirApkUnsing;
+            this.dirApkOut = dirApkOut;
+            this.dirOut = dirOut;
+            this.index = index;
+            this.originalFile = originalFile;
+            this.apkName = apkName;
+            this.progressBar = progressBar;
+            this.keystore = keystore;
+            this.isSentinel = false;
+        }
+
+        static SignTask sentinel() {
+            return new SignTask(null, null, null, -1, null, null, null, null) {
+                @Override
+                public boolean isSentinel() { return true; }
+            };
+        }
+
+        public boolean isSentinel() { return false; }
     }
 
     @NonNull
@@ -79,10 +123,63 @@ public class MainWorker extends Worker {
 
         File keystore = Utils.GetKeystoreFile(getApplicationContext());
 
+        BlockingQueue<SignTask> signQueue = new LinkedBlockingQueue<>();
+        Thread signerThread = new Thread(() -> {
+            try {
+                while (true) {
+                    SignTask task = signQueue.take();
+                    if (task.isSentinel()) break;
+                    if (isStopped()) break;
+
+                    try {
+                        progressManager.postUpdate(ProcessUpdate.progress("## Signer\nSigning **" + task.apkName + "**", -1));
+                        task.progressBar.Increase(null);
+
+                        if (!task.dirOut.exists()) task.dirOut.mkdir();
+
+                        File align = new File(task.dirApkUnsing.getAbsolutePath().replace(task.dirApkUnsing.getName(), "") + "align_" + task.dirApkUnsing.getName());
+                        ZipAlign.alignApk(task.dirApkUnsing, align);
+                        task.dirApkUnsing.delete();
+                        align.renameTo(task.dirApkUnsing);
+
+                        String[] arg = new String[]{
+                                "sign",
+                                "--ks", task.keystore.getPath(),
+                                "--key-pass", "pass:forpico2dock",
+                                "--ks-pass", "pass:forpico2dock",
+                                "--min-sdk-version", "29",
+                                "--max-sdk-version", "29",
+                                "--v4-signing-enabled", "false",
+                                "--in", task.dirApkUnsing.getPath(),
+                                "--out", task.dirApkOut.getPath(),
+                        };
+                        ApkSignerTool.main(arg);
+                        File idsig = new File(task.dirApkOut.getAbsolutePath() + ".idsig");
+                        if (idsig.exists()) idsig.delete();
+
+                        task.progressBar.Increase(null);
+                        FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Success + " " + task.originalFile);
+                    } catch (Exception error) {
+                        Log.e("Pico2Dock", "Signing error", error);
+                        errorMessage = "```\n" + error.toString() + "\n```";
+                        FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Error + " " + task.dirApkUnsing.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
+                        task.progressBar.Increase(1);
+                    }
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        signerThread.start();
+
         for (int i = 0; i < apkFiles.length; i++) {
+            System.gc();
             String file = apkFiles[i];
             
-            if (isStopped()) return Result.success();
+            if (isStopped()) {
+                signQueue.offer(SignTask.sentinel());
+                break;
+            }
 
             if (file.contains(Utils.FileIndicator.Error))
                 continue;
@@ -117,7 +214,7 @@ public class MainWorker extends Worker {
 
             // Convert APKM to APK
             if (Pattern.matches(".*\\.(xapk|apkm|apks)", file)) {
-                if (isStopped()) return Result.success();
+                if (isStopped()) break;
                 File dirMerger = new File(dirPico2Dock, "Merger");
                 File dirZipper = new File(dirPico2Dock, "Zipper");
                 File dirZipApk = new File(dirZipper, apkName);
@@ -128,15 +225,12 @@ public class MainWorker extends Worker {
                     if (true) {
                         progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...", -1));
 
-                        if (!dirZipper.exists())
-                            dirZipper.mkdir();
                         if (!dirZipApk.exists())
                             dirZipApk.createNewFile();
 
-                        Files.copy(apkFile.toPath(), dirZipApk.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        Utils.FastCopy(apkFile, dirZipApk);
 
                         final Boolean[] pickArm64v8a = {false};
-
                         ZipFile zipFile = new ZipFile(dirZipApk);
                         List<FileHeader> fileHeaders = zipFile.getFileHeaders();
                         List<String> filesToRemove = new ArrayList<String>();
@@ -178,7 +272,7 @@ public class MainWorker extends Worker {
                     dirApkOut = new File(dirOut, "Pico_" + apkName);
                     dirApkUnsing = new File(dirUnsign, apkName);
                 } catch (Exception error) {
-                    if (isStopped()) return Result.success();
+                    if (isStopped()) break;
                     errorMessage = error.toString();
                     FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                     progressBar.Increase(5);
@@ -195,7 +289,7 @@ public class MainWorker extends Worker {
                 }
             }
 
-            if (isStopped()) return Result.success();
+            if (isStopped()) break;
             try {
                 progressManager.postUpdate(ProcessUpdate.progress("## Decoder\nDecompiling resources of **" + apkName + "**...", -1));
                 progressBar.Increase(null);
@@ -210,21 +304,19 @@ public class MainWorker extends Worker {
                 Decompiler executor = new Decompiler(options, apkName, this::isStopped);
                 executor.runCommand();
             } catch (Exception error) {
-                if (isStopped()) return Result.success();
+                if (isStopped()) break;
                 errorMessage = "```\n" + error.toString() + "\n```";
                 FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                 progressBar.Increase(4);
                 continue;
             }
 
-            if (isStopped()) return Result.success();
+            if (isStopped()) break;
             try {
                 progressManager.postUpdate(ProcessUpdate.progress("## Current Status\nModifing **AndroidManifest.xml** of **" + apkName + "**...", -1));
                 progressBar.Increase(null);
 
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                DocumentBuilder builder = factory.newDocumentBuilder();
+                DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 
                 String android = "http://schemas.android.com/apk/res/android";
                 File xmlFile = new File(dirWorker, "/AndroidManifest.xml");
@@ -359,7 +451,10 @@ public class MainWorker extends Worker {
                     } else {
                         String stringID = app_label.replace("@string/", "");
                         try (Stream<Path> paths = Files.walk(Paths.get(dirWorker.getPath(), "resources"))) {
-                            paths.filter(p -> p.getFileName().toString().equals("strings.xml")).forEach(path -> {
+                            paths.parallel()
+                                    .filter(p -> p.getParent().getFileName().toString().startsWith("values") && 
+                                                 p.getFileName().toString().equals("strings.xml"))
+                                    .forEach(path -> {
                                 try {
                                     File stringXml = path.toFile();
                                     Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stringXml);
@@ -383,18 +478,18 @@ public class MainWorker extends Worker {
                     }
                 }
 
-                Transformer transManifest = TransformerFactory.newInstance().newTransformer();
+                Transformer transManifest = transformerFactory.newTransformer();
                 transManifest.setOutputProperty(OutputKeys.INDENT, "yes");
                 transManifest.transform(new DOMSource(xmlDoc), new StreamResult(xmlFile));
             } catch (Exception error) {
-                if (isStopped()) return Result.success();
+                if (isStopped()) break;
                 errorMessage = "```\n" + error.toString() + "\n```";
                 FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                 progressBar.Increase(3);
                 continue;
             }
 
-            if (isStopped()) return Result.success();
+            if (isStopped()) break;
             try {
                 progressManager.postUpdate(ProcessUpdate.progress("## Encoder\nBuilding **" + apkName + "**...", -1));
                 progressBar.Increase(null);
@@ -408,49 +503,23 @@ public class MainWorker extends Worker {
                 Compiler executor = new Compiler(options, apkName, this::isStopped);
                 executor.runCommand();
             } catch (Exception error) {
-                if (isStopped()) return Result.success();
+                if (isStopped()) break;
                 errorMessage = "```\n" + error.toString() + "\n```";
                 FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
                 progressBar.Increase(2);
                 continue;
             }
 
-            if (isStopped()) return Result.success();
-            try {
-                progressManager.postUpdate(ProcessUpdate.progress("## Signer\nSigning **" + apkName + "**", -1));
-                progressBar.Increase(null);
+            // Hand off to Signer Thread
+            signQueue.offer(new SignTask(dirApkUnsing, dirApkOut, dirOut, i, file, apkName, progressBar, keystore));
+        }
 
-                if (!dirOut.exists()) dirOut.mkdir();
-
-                File align = new File(dirApkUnsing.getAbsolutePath().replace(dirApkUnsing.getName(), "") + "align_" + dirApkUnsing.getName());
-                ZipAlign.alignApk(dirApkUnsing, align);
-                dirApkUnsing.delete();
-                align.renameTo(dirApkUnsing);
-
-                String[] arg = new String[]{
-                        "sign",
-                        "--ks", keystore.getPath(),
-                        "--key-pass", "pass:forpico2dock",
-                        "--ks-pass", "pass:forpico2dock",
-                        "--min-sdk-version", "29",
-                        "--max-sdk-version", "29",
-                        "--v4-signing-enabled", "false",
-                        "--in", dirApkUnsing.getPath(),
-                        "--out", dirApkOut.getPath(),
-                };
-                ApkSignerTool.main(arg);
-                File idsig = new File(dirApkOut.getAbsolutePath() + ".idsig");
-                if (idsig.exists()) idsig.delete();
-            } catch (Exception error) {
-                if (isStopped()) return Result.success();
-                errorMessage = "```\n" + error.toString() + "\n```";
-                FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + error.toString());
-                progressBar.Increase(1);
-                continue;
-            }
-
-            progressBar.Increase(null);
-            FileviewHelper.ChangeText(i, Utils.FileIndicator.Success + " " + file);
+        // Signal Signer Thread to finish
+        signQueue.offer(SignTask.sentinel());
+        try {
+            signerThread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
         Utils.CleanupTempDir();
@@ -462,7 +531,7 @@ public class MainWorker extends Worker {
 
         Utils.PlayAlertSound(getApplicationContext());
         try {
-            Thread.sleep(2000); // Wait longer for the 1.5s sound
+            Thread.sleep(2000); 
         } catch (InterruptedException ignored) {}
 
         return Result.success();
@@ -494,7 +563,7 @@ public class MainWorker extends Worker {
     public ForegroundInfo getForegroundInfo() {
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setContentTitle("Pico2Dock is processing files")
-                .setSmallIcon(R.drawable.ic_launcher_foreground) // Use default icon
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setOngoing(true)
                 .build();
         return new ForegroundInfo(NOTIFICATION_ID, notification);
