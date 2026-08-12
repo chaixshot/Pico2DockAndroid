@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Nu se poate efectua această acțiune în timpul procesării</string>
     <string name="exit_hint">Apăsați încă o dată pentru a ieși</string>
     <string name="file_access_error">Nu se poate accesa fișierul \"%1$s\"</string>
+    <string name="menu_install">Instalează</string>
+    <string name="menu_remove">Elimină</string>
+    <string name="menu_delete">Șterge</string>
 </resources>

@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">処理中はこのアクションを実行できません</string>
     <string name="exit_hint">もう一度押すと終了します</string>
     <string name="file_access_error">ファイル \"%1$s\" にアクセスできません</string>
+    <string name="menu_install">インストール</string>
+    <string name="menu_remove">取り除く</string>
+    <string name="menu_delete">削除</string>
 </resources>

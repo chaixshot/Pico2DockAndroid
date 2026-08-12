@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Can\'t do this action while processing</string>
     <string name="exit_hint">Press once again to Exit</string>
     <string name="file_access_error">Can\'t access file \"%1$s\"</string>
+    <string name="menu_install">Install</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_delete">Delete</string>
 </resources>

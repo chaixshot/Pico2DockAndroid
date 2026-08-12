@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Tätä toimintoa ei voi tehdä käsittelyn aikana</string>
     <string name="exit_hint">Poistu painamalla vielä kerran</string>
     <string name="file_access_error">Tiedostoon \"%1$s\" ei saada yhteyttä</string>
+    <string name="menu_install">Asenna</string>
+    <string name="menu_remove">Poista</string>
+    <string name="menu_delete">Tuhoa</string>
 </resources>

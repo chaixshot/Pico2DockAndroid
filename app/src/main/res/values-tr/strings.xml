@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">İşlem yapılıyorken bu eylem gerçekleştirilemez</string>
     <string name="exit_hint">Çıkmak için bir kez daha basın</string>
     <string name="file_access_error">\"%1$s\" dosyasına erişilemiyor</string>
+    <string name="menu_install">Yükle</string>
+    <string name="menu_remove">Kaldır</string>
+    <string name="menu_delete">Sil</string>
 </resources>

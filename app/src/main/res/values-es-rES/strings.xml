@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">No se puede realizar esta acción durante el procesamiento</string>
     <string name="exit_hint">Pulsa una vez más para salir</string>
     <string name="file_access_error">No se puede acceder al archivo \"%1$s\"</string>
+    <string name="menu_install">Instalar</string>
+    <string name="menu_remove">Quitar</string>
+    <string name="menu_delete">Eliminar</string>
 </resources>

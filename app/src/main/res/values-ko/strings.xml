@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">처리 중에는 이 작업을 수행할 수 없습니다</string>
     <string name="exit_hint">한 번 더 누르면 종료됩니다</string>
     <string name="file_access_error">파일 \"%1$s\"에 액세스할 수 없습니다</string>
+    <string name="menu_install">설치</string>
+    <string name="menu_remove">제거</string>
+    <string name="menu_delete">삭제</string>
 </resources>

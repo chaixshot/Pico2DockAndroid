@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Tuto akci nelze provést během zpracování</string>
     <string name="exit_hint">Stiskněte ještě jednou pro ukončení</string>
     <string name="file_access_error">Nelze přistoupit k souboru \"%1$s\"</string>
+    <string name="menu_install">Instalovat</string>
+    <string name="menu_remove">Odstranit</string>
+    <string name="menu_delete">Smazat</string>
 </resources>

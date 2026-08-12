@@ -18,6 +18,14 @@ android {
         }
     }
 
+    androidResources {
+        localeFilters += setOf(
+            "cs", "da", "nl", "en", "en-rGB", "fi", "fr", "de", "el", "it", "ja", "ko", "ms",
+            "nb", "pl", "pt-rPT", "pt-rBR", "ro", "ru", "es-rUS", "es", "sv", "th", "tr",
+            "zh-rCN", "zh-rTW", "zh-rHK"
+        )
+    }
+
     defaultConfig {
         applicationId = "com.hamer.pico2dock"
         minSdk = 29

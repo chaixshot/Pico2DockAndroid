@@ -58,4 +58,7 @@
     <string name="file_access_error">Can\'t access file \"%1$s\"</string>
     <string name="language_picker_title">Select Language</string>
     <string name="language_auto">Auto</string>
+    <string name="menu_install">Install</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_delete">Delete</string>
 </resources>

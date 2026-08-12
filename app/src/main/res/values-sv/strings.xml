@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Kan inte utföra denna åtgärd under bearbetning</string>
     <string name="exit_hint">Tryck en gång till för att avsluta</string>
     <string name="file_access_error">Kan inte komma åt filen \"%1$s\"</string>
+    <string name="menu_install">Installera</string>
+    <string name="menu_remove">Ta bort</string>
+    <string name="menu_delete">Radera</string>
 </resources>

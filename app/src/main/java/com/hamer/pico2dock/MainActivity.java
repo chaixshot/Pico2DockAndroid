@@ -491,9 +491,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        menu.add(getString(R.string.install_confirm).replace("?", ""));
-        menu.add(getString(R.string.remove_confirm).replace("?", ""));
-        menu.add(getString(R.string.delete_confirm).replace("?", ""));
+        menu.add(getString(R.string.menu_install));
+        menu.add(getString(R.string.menu_remove));
+        menu.add(getString(R.string.menu_delete));
     }
 
     @Override
@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
             });
         } else {
             //?? Install
-            if (item.getTitle().equals(getString(R.string.install_confirm).replace("?", ""))) {
+            if (item.getTitle().equals(getString(R.string.menu_install))) {
 
                 builder.setTitle(getString(R.string.install_confirm));
                 builder.setMessage(apkTargetFile.getPath());
@@ -548,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //?? Remove
-            if (item.getTitle().equals(getString(R.string.remove_confirm).replace("?", ""))) {
+            if (item.getTitle().equals(getString(R.string.menu_remove))) {
                 builder.setTitle(getString(R.string.remove_confirm));
                 builder.setMessage(apkTargetFile.getPath());
 
@@ -561,7 +561,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //?? Delete
-            if (item.getTitle().equals(getString(R.string.delete_confirm).replace("?", ""))) {
+            if (item.getTitle().equals(getString(R.string.menu_delete))) {
                 builder.setTitle(getString(R.string.delete_confirm));
                 builder.setMessage(apkTargetFile.getPath());
 

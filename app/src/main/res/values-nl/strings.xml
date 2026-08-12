@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Kan deze actie niet uitvoeren tijdens het verwerken</string>
     <string name="exit_hint">Druk nogmaals om af te sluiten</string>
     <string name="file_access_error">Kan geen toegang krijgen tot bestand \"%1$s\"</string>
+    <string name="menu_install">Installeren</string>
+    <string name="menu_remove">Verwijderen</string>
+    <string name="menu_delete">Wissen</string>
 </resources>

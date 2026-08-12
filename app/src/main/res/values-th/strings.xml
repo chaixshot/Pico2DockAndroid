@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">ไม่สามารถดำเนินการนี้ได้ในขณะประมวลผล</string>
     <string name="exit_hint">กดอีกครั้งเพื่อออก</string>
     <string name="file_access_error">ไม่สามารถเข้าถึงไฟล์ \"%1$s\"</string>
+    <string name="menu_install">ติดตั้ง</string>
+    <string name="menu_remove">เอาออก</string>
+    <string name="menu_delete">ลบ</string>
 </resources>

@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">處理時無法執行此操作</string>
     <string name="exit_hint">再按一次退出</string>
     <string name="file_access_error">無法訪問檔案「%1$s」</string>
+    <string name="menu_install">安裝</string>
+    <string name="menu_remove">移除</string>
+    <string name="menu_delete">刪除</string>
 </resources>

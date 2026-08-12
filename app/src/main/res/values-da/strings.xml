@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Kan ikke udføre denne handling under behandling</string>
     <string name="exit_hint">Tryk en gang til for at afslutte</string>
     <string name="file_access_error">Kan ikke få adgang til fil \"%1$s\"</string>
+    <string name="menu_install">Installer</string>
+    <string name="menu_remove">Fjern</string>
+    <string name="menu_delete">Slet</string>
 </resources>

@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Tidak boleh melakukan tindakan ini semasa pemprosesan</string>
     <string name="exit_hint">Tekan sekali lagi untuk Keluar</string>
     <string name="file_access_error">Tidak dapat mengakses fail \"%1$s\"</string>
+    <string name="menu_install">Pasang</string>
+    <string name="menu_remove">Alih keluar</string>
+    <string name="menu_delete">Padam</string>
 </resources>

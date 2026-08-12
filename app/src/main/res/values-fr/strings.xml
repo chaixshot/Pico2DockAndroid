@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Impossible d\'effectuer cette action pendant le traitement</string>
     <string name="exit_hint">Appuyez encore une fois pour quitter</string>
     <string name="file_access_error">Impossible d\'accéder au fichier \"%1$s\"</string>
+    <string name="menu_install">Installer</string>
+    <string name="menu_remove">Retirer</string>
+    <string name="menu_delete">Supprimer</string>
 </resources>

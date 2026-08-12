@@ -56,4 +56,7 @@
     <string name="action_blocked_processing">Δεν είναι δυνατή αυτή η ενέργεια κατά την επεξεργασία</string>
     <string name="exit_hint">Πατήστε άλλη μια φορά για έξοδο</string>
     <string name="file_access_error">Δεν είναι δυνατή η πρόσβαση στο αρχείο \"%1$s\"</string>
+    <string name="menu_install">Εγκατάσταση</string>
+    <string name="menu_remove">Αφαίρεση</string>
+    <string name="menu_delete">Διαγραφή</string>
 </resources>

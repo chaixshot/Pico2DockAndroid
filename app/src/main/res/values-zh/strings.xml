@@ -58,4 +58,7 @@
     <string name="file_access_error">无法访问文件 \"%1$s\"</string>
     <string name="language_picker_title">选择语言</string>
     <string name="language_auto">自动</string>
+    <string name="menu_install">安装</string>
+    <string name="menu_remove">移除</string>
+    <string name="menu_delete">删除</string>
 </resources>

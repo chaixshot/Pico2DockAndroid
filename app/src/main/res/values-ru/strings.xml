@@ -58,4 +58,7 @@
     <string name="file_access_error">Нет доступа к файлу \"%1$s\"</string>
     <string name="language_picker_title">Выберите язык</string>
     <string name="language_auto">Авто</string>
+    <string name="menu_install">Установить</string>
+    <string name="menu_remove">Удалить из списка</string>
+    <string name="menu_delete">Удалить файл</string>
 </resources>
