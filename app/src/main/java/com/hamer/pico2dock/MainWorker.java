@@ -116,6 +116,7 @@ public class MainWorker extends Worker {
         boolean isRePackageAdv = getInputData().getBoolean("IS_REPACKAGE_ADV", false);
         String namePrefix = getInputData().getString("NAME_PREFIX");
         boolean isRename = getInputData().getBoolean("IS_RENAME", false);
+        boolean isFinishSound = getInputData().getBoolean("IS_FINISH_SOUND", true);
 
         if (apkFiles == null) return Result.failure();
 
@@ -578,10 +579,13 @@ public class MainWorker extends Worker {
             progressManager.postUpdate(ProcessUpdate.success());
         }
 
-        Utils.PlayAlertSound(getApplicationContext());
-        try {
-            Thread.sleep(2000); 
-        } catch (InterruptedException ignored) {}
+        if (isFinishSound) {
+            Utils.PlayAlertSound(getApplicationContext());
+            try {
+                Thread.sleep(1500); // Give melody time to play
+            } catch (InterruptedException ignored) {
+            }
+        }
 
         return Result.success();
     }

@@ -7,6 +7,7 @@ import static androidx.core.content.FileProvider.getUriForFile;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     Switch SwtichHideDock;
     CheckBox CheckboxRePackage;
     CheckBox CheckboxRePackageAdv;
+    Switch CheckboxFinishSound;
     ProgressBar StatusProgressBar;
     TextView PercentText;
     EditText TextRename;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     boolean IsRePackageAdv = false;
     String NamePrefix = "";
     boolean IsRename = false;
+    boolean IsFinishSound = true;
 
     boolean IsProcessRunning = false;
     Long DoubleBack = System.currentTimeMillis() - 2000;
@@ -133,7 +136,10 @@ public class MainActivity extends AppCompatActivity {
         PercentText = (TextView) findViewById(R.id.PercentText);
         TextRename = (EditText) findViewById(R.id.TextRename);
         CheckboxRename = (CheckBox) findViewById(R.id.CheckboxRename);
+        CheckboxFinishSound = (Switch) findViewById(R.id.FinishSound);
         ButtonBattery = (Button) findViewById(R.id.ButtonBattery);
+
+        loadConfig();
 
         ResetAppearance();
         ChangeButtonState();
@@ -258,7 +264,10 @@ public class MainActivity extends AppCompatActivity {
         IsRePackageAdv = CheckboxRePackageAdv.isChecked();
         NamePrefix = TextRename.getText().toString();
         IsRename = CheckboxRename.isChecked();
+        IsFinishSound = CheckboxFinishSound.isChecked();
         IsProcessRunning = true;
+
+        saveConfig();
 
         FileviewHelper.ClearAllTag();
         ResetAppearance();
@@ -273,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 .putBoolean("IS_REPACKAGE_ADV", IsRePackageAdv)
                 .putString("NAME_PREFIX", NamePrefix)
                 .putBoolean("IS_RENAME", IsRename)
+                .putBoolean("IS_FINISH_SOUND", IsFinishSound)
                 .build();
 
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MainWorker.class)
@@ -345,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
         CheckboxRePackageAdv.setEnabled(!IsProcessRunning);
         TextRename.setEnabled(!IsProcessRunning);
         CheckboxRename.setEnabled(!IsProcessRunning);
+        CheckboxFinishSound.setEnabled(!IsProcessRunning);
 
         if (ButtonBattery != null) {
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
@@ -378,6 +389,19 @@ public class MainActivity extends AppCompatActivity {
         StatusProgressBar.setProgress(0);
         StatusProgressBar.setVisibility(View.INVISIBLE);
         PercentText.setText("");
+    }
+
+    private void loadConfig() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        IsFinishSound = sharedPref.getBoolean("FinishSound", true);
+        CheckboxFinishSound.setChecked(IsFinishSound);
+    }
+
+    private void saveConfig() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("FinishSound", CheckboxFinishSound.isChecked());
+        editor.apply();
     }
 
     //** Permission

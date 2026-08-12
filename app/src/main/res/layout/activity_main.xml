@@ -277,26 +277,40 @@
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
-                        android:layout_height="45dp"
+                        android:layout_height="match_parent"
                         app:cardCornerRadius="32dp"
-                        app:cardUseCompatPadding="false"
-                        app:contentPaddingBottom="10dp"
                         app:contentPaddingLeft="20dp"
-                        app:contentPaddingRight="20dp"
-                        app:contentPaddingTop="10dp">
+                        app:contentPaddingRight="20dp">
 
-                        <Switch
-                            android:id="@+id/SwitchHideDock"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0"
-                            android:text="Hide Dock"
-                            android:tooltipText="Put the app on to of everything incluing dock and keyboard" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <Switch
+                                android:id="@+id/SwitchHideDock"
+                                android:paddingTop="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:text="Hide Dock"
+                                android:tooltipText="Put the app on to of everything incluing dock and keyboard" />
+
+                            <Switch
+                                android:id="@+id/FinishSound"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="10dp"
+                                android:layout_weight="0"
+                                android:text="Finish Sound"
+                                android:tooltipText="Play process finished notification sound." />
+                        </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         app:cardCornerRadius="32dp"
                         app:contentPaddingLeft="20dp"
