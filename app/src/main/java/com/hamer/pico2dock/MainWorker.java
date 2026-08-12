@@ -140,7 +140,7 @@ public class MainWorker extends Worker {
                     Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
                     try {
-                        progressManager.postUpdate(ProcessUpdate.progress("## Signer\nSigning **" + task.apkName + "**", -1));
+                        progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.signing_status, task.apkName), -1));
                         task.progressBar.Increase(null);
 
                         if (!task.dirOut.exists()) task.dirOut.mkdir();
@@ -203,7 +203,7 @@ public class MainWorker extends Worker {
             if (file.contains(Utils.FileIndicator.Error))
                 continue;
 
-            progressManager.postUpdate(ProcessUpdate.progress("## Current Status\nCleaning directory...", -1));
+            progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.cleaning_dir), -1));
             Utils.CleanupWorkerDir();
 
             errorMessage = "";
@@ -230,7 +230,7 @@ public class MainWorker extends Worker {
             FileviewHelper.ChangeText(i, Utils.FileIndicator.Working + " " + file);
 
             if (!apkFile.exists() || !apkFile.isFile() || !apkFile.canRead()) {
-                errorMessage = "Can't access file \"" + apkFile.getPath() + "\"";
+                errorMessage = getApplicationContext().getString(R.string.file_access_error, apkFile.getPath());
                 FileviewHelper.ChangeText(i, Utils.FileIndicator.Error + " " + apkFile.getPath() + " " + Utils.FileIndicator.ErrorInfo + " " + errorMessage);
                 continue;
             }
@@ -245,7 +245,7 @@ public class MainWorker extends Worker {
                 
                 // Copy to Zipper directory first so library uses our path for extraction
                 File dirZipApk = new File(dirZipper, "temp_" + apkName);
-                progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nPreparing temporary files...", -1));
+                progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.preparing_temp, apkName), -1));
                 try {
                     Utils.FastCopy(apkFile, dirZipApk);
                     apkFile = dirZipApk;
@@ -257,7 +257,7 @@ public class MainWorker extends Worker {
 
                 try {
                     // Optimization: Check if architecture removal is actually needed
-                    progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nAnalyzing architectures...", -1));
+                    progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.analyzing_arch, apkName), -1));
                     
                     List<String> filesToRemove = new ArrayList<>();
                     boolean pickArm64v8a = false;
@@ -284,13 +284,13 @@ public class MainWorker extends Worker {
                     }
 
                     if (!filesToRemove.isEmpty()) {
-                        progressManager.postUpdate(ProcessUpdate.progress("## Merger\n**" + apkName + "**\nRemoving unnecessary architecture...", -1));
+                        progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.merger_status, apkName), -1));
                         try (ZipFile zipFile = new ZipFile(apkFile)) {
                             zipFile.removeFiles(filesToRemove);
                         }
                     }
 
-                    progressManager.postUpdate(ProcessUpdate.progress("## Merger\nMerging multiple split **" + apkName + "**...", -1));
+                    progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.merging_status, apkName), -1));
 
                     String newName = apkName.replaceAll("\\.x?apk[ms]?", ".apk");
                     MergerOptions options = new MergerOptions();
@@ -329,7 +329,7 @@ public class MainWorker extends Worker {
 
             if (isStopped()) break;
             try {
-                progressManager.postUpdate(ProcessUpdate.progress("## Decoder\nDecompiling resources of **" + apkName + "**...", -1));
+                progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.decompile_status, apkName), -1));
                 progressBar.Increase(null);
 
                 DecompileOptions options = new DecompileOptions();
@@ -351,7 +351,7 @@ public class MainWorker extends Worker {
 
             if (isStopped()) break;
             try {
-                progressManager.postUpdate(ProcessUpdate.progress("## Current Status\nModifing **AndroidManifest.xml** of **" + apkName + "**...", -1));
+                progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.modify_manifest_status, apkName), -1));
                 progressBar.Increase(null);
 
                 DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
@@ -531,7 +531,7 @@ public class MainWorker extends Worker {
 
             if (isStopped()) break;
             try {
-                progressManager.postUpdate(ProcessUpdate.progress("## Encoder\nBuilding **" + apkName + "**...", -1));
+                progressManager.postUpdate(ProcessUpdate.progress(getApplicationContext().getString(R.string.building_status, apkName), -1));
                 progressBar.Increase(null);
 
                 BuildOptions options = new BuildOptions();
@@ -618,7 +618,7 @@ public class MainWorker extends Worker {
     @Override
     public ForegroundInfo getForegroundInfo() {
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setContentTitle("Pico2Dock is processing files")
+                .setContentTitle(getApplicationContext().getString(R.string.processing_notification_title))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setOngoing(true)
                 .build();

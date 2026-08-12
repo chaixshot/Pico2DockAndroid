@@ -3,7 +3,7 @@
     <string name="app_description">Convert the (X)APK(M, S) app from Floating to Dashboard Dock for Pico 4, alike File Manager.</string>
     <string name="multitasking_desc">Allow to multitasking while in fullscreen immersive app.</string>
     <string name="too_large_warning">Too large file might run out of memory, using desktop version instead.</string>
-    <string name="pico_optimize_hint">Press Pico Optimize Memory to preserve more RAM usage to do this task</string>
+    <string name="pico_optimize_hint">Press Pico Optimise Memory to preserve more RAM usage to do this task</string>
     <string name="made_by">Made by H@mer</string>
     <string name="github_page">Github Page</string>
     <string name="github_tooltip">Open Github page in browser</string>
@@ -15,8 +15,8 @@
     <string name="button_clear_tooltip">Clear all files</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_cancel_tooltip">Terminate processing task</string>
-    <string name="battery_optimization_desc">Disable battery optimization</string>
-    <string name="battery_optimization_tooltip">Disable battery optimization for background task</string>
+    <string name="battery_optimization_desc">Disable battery optimisation</string>
+    <string name="battery_optimization_tooltip">Disable battery optimisation for background task</string>
     <string name="hide_dock">Hide Dock</string>
     <string name="hide_dock_tooltip">Put the app on top of everything including dock and keyboard</string>
     <string name="finish_sound">Finish Sound</string>
@@ -38,7 +38,7 @@
     <string name="remove_confirm">Do you want to remove?</string>
     <string name="delete_confirm">Do you want to delete?</string>
     <string name="processing_error_title">ERROR</string>
-    <string name="canceling_msg">## Current Status\nCanceling process please wait...</string>
+    <string name="canceling_msg">## Current Status\nCancelling process please wait...</string>
     <string name="process_running_toast">You have to cancel the process before exiting</string>
     <string name="process_terminated_msg">## Current Status\nProcess has been terminated.</string>
     <string name="success_msg">## Current Status\nAll files have been modified.\n* The APK files are in the Pico folder by the same directory as the original file.\n* Long click file in the box above to see the options.</string>
@@ -46,13 +46,13 @@
     <string name="merger_status">## Merger\n**%1$s**\nRemoving unnecessary architecture...</string>
     <string name="merging_status">## Merger\nMerging multiple split **%1$s**...</string>
     <string name="decompile_status">## Decoder\nDecompiling resources of **%1$s**...</string>
-    <string name="modify_manifest_status">## Current Status\nModifing **AndroidManifest.xml** of **%1$s**...</string>
+    <string name="modify_manifest_status">## Current Status\nModifying **AndroidManifest.xml** of **%1$s**...</string>
     <string name="building_status">## Encoder\nBuilding **%1$s**...</string>
     <string name="signing_status">## Signer\nSigning **%1$s**</string>
     <string name="analyzing_arch">## Merger\n**%1$s**\nAnalyzing architectures...</string>
     <string name="preparing_temp">## Merger\n**%1$s**\nPreparing temporary files...</string>
     <string name="processing_notification_title">Pico2Dock is processing files</string>
-    <string name="battery_already_disabled">Battery optimization is already disabled.</string>
+    <string name="battery_already_disabled">Battery optimisation is already disabled.</string>
     <string name="action_blocked_processing">Can\'t do this action while processing</string>
     <string name="exit_hint">Press once again to Exit</string>
     <string name="file_access_error">Can\'t access file \"%1$s\"</string>

@@ -161,20 +161,20 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (update.errorMessage != null) {
                     StatusProgressBar.setVisibility(VISIBLE);
-                    PercentText.setText("Error");
-                    ChangeStateText("## ERROR\n\n" + update.errorMessage);
+                    PercentText.setText(R.string.processing_error_title);
+                    ChangeStateText("## " + getString(R.string.processing_error_title) + "\n\n" + update.errorMessage);
                 }
                 if (update.isFinished) {
                     IsProcessRunning = false;
                     ChangeButtonState();
                     if (update.isCancelled) {
                         StatusProgressBar.setVisibility(VISIBLE);
-                        PercentText.setText("Terminated");
-                        ChangeStateText("## Current Status\nProcess has been terminated.");
+                        PercentText.setText(R.string.button_cancel);
+                        ChangeStateText(getString(R.string.process_terminated_msg));
                     } else if (update.errorMessage == null) {
                         StatusProgressBar.setVisibility(VISIBLE);
-                        PercentText.setText("Successful");
-                        ChangeStateText("## Current Status\nAll files have been modified.\n* The APK files are in the Pico folder by the same directory as the original file.\n* Long click file in the box above to see the options.");
+                        PercentText.setText("100%");
+                        ChangeStateText(getString(R.string.success_msg));
                     }
                 }
             }
@@ -206,14 +206,14 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (DoubleBack + 2000 > System.currentTimeMillis()) {
             if (IsProcessRunning) {
-                    Toast.makeText(this, "You have to cancel the process before exiting", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.process_running_toast), Toast.LENGTH_SHORT).show();
             } else {
                 super.onBackPressed();
                 System.exit(0);
             }
         } else {
             DoubleBack = System.currentTimeMillis();
-            Toast.makeText(this, "Press once again to Exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.exit_hint), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ButtonCancelPressed(View view) {
-        ChangeStateText("## Current Status\nCanceling process please wait...");
+        ChangeStateText(getString(R.string.canceling_msg));
         WorkManager.getInstance(this).cancelAllWorkByTag("MainWorkerTask");
         view.setEnabled(false);
     }
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             intent.setData(Uri.parse("package:" + packageName));
             startActivity(intent);
         } else {
-            Toast.makeText(this, "Battery optimization is already disabled.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.battery_already_disabled), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -420,9 +420,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        menu.add("Install");
-        menu.add("Remove");
-        menu.add("Delete");
+        menu.add(getString(R.string.install_confirm).replace("?", ""));
+        menu.add(getString(R.string.remove_confirm).replace("?", ""));
+        menu.add(getString(R.string.delete_confirm).replace("?", ""));
     }
 
     @Override
@@ -437,26 +437,26 @@ public class MainActivity extends AppCompatActivity {
         File apkFile = new File(Utils.FileIndicator.ClearTag(apkPath));
         File apkOutFile = new File(apkOutPath);
 
-        Boolean isConverted = apkPath.contains(Utils.FileIndicator.Success) && apkOutFile.exists();
+        boolean isConverted = apkPath.contains(Utils.FileIndicator.Success) && apkOutFile.exists();
         File apkTargetFile = isConverted ? apkOutFile : apkFile;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         if (IsProcessRunning) {
             builder.setTitle("");
-            builder.setMessage("Can't do this action while processing");
+            builder.setMessage(getString(R.string.action_blocked_processing));
 
-            builder.setPositiveButton("Close", (dialog, which) -> {
+            builder.setPositiveButton(getString(R.string.close_button), (dialog, which) -> {
                 dialog.dismiss();
             });
         } else {
             //?? Install
-            if (item.getTitle() == "Install") {
+            if (item.getTitle().equals(getString(R.string.install_confirm).replace("?", ""))) {
 
-                builder.setTitle("Do you want to install?");
+                builder.setTitle(getString(R.string.install_confirm));
                 builder.setMessage(apkTargetFile.getPath());
 
-                builder.setPositiveButton("YES", (dialog, which) -> {
+                builder.setPositiveButton(getString(R.string.yes_button), (dialog, which) -> {
                     try {
                         PermissionHelper.AskInstallPermission();
 
@@ -469,32 +469,32 @@ public class MainActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         startActivity(intent);
                     } catch (Settings.SettingNotFoundException e) {
-                        ChangeStateText("## ERROR\n\n" + e);
+                        ChangeStateText("## " + getString(R.string.processing_error_title) + "\n\n" + e);
                     }
 
                     dialog.dismiss();
-                }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                }).setNegativeButton(getString(R.string.no_button), (dialog, which) -> dialog.dismiss());
             }
 
             //?? Remove
-            if (item.getTitle() == "Remove") {
-                builder.setTitle("Do you want to remove?");
+            if (item.getTitle().equals(getString(R.string.remove_confirm).replace("?", ""))) {
+                builder.setTitle(getString(R.string.remove_confirm));
                 builder.setMessage(apkTargetFile.getPath());
 
-                builder.setPositiveButton("YES", (dialog, which) -> {
+                builder.setPositiveButton(getString(R.string.yes_button), (dialog, which) -> {
                     FileviewHelper.RemoveByIndex(info.position);
 
                     ChangeButtonState();
                     dialog.dismiss();
-                }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                }).setNegativeButton(getString(R.string.no_button), (dialog, which) -> dialog.dismiss());
             }
 
             //?? Delete
-            if (item.getTitle() == "Delete") {
-                builder.setTitle("Do you want to delete?");
+            if (item.getTitle().equals(getString(R.string.delete_confirm).replace("?", ""))) {
+                builder.setTitle(getString(R.string.delete_confirm));
                 builder.setMessage(apkTargetFile.getPath());
 
-                builder.setPositiveButton("YES", (dialog, which) -> {
+                builder.setPositiveButton(getString(R.string.yes_button), (dialog, which) -> {
                     if (isConverted)
                         FileviewHelper.ClearTag(info.position);
                     else
@@ -510,7 +510,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     dialog.dismiss();
-                }).setNegativeButton("NO", (dialog, which) -> dialog.dismiss());
+                }).setNegativeButton(getString(R.string.no_button), (dialog, which) -> dialog.dismiss());
             }
         }
 
@@ -523,10 +523,10 @@ public class MainActivity extends AppCompatActivity {
     public void ButtonHelpOpen(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Help");
-        builder.setMessage("⬤ Hold point any element to see its tooltip including files in the box.");
+        builder.setTitle(getString(R.string.help_title));
+        builder.setMessage(getString(R.string.help_message));
 
-        builder.setPositiveButton("Close", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.close_button), (dialog, which) -> {
             dialog.dismiss();
         });
 
