@@ -62,13 +62,17 @@ public class FileviewHelper {
 
     public static void RemoveByIndex(int index) {
         String[] apkFiles = ProgressManager.getInstance().getApkFiles();
-        if (apkFiles == null || index < 0 || index >= apkFiles.length) return;
+        if (apkFiles != null && index >= 0 && index < apkFiles.length) {
+            List<String> _listAPKFiles = new ArrayList<>(Arrays.asList(apkFiles));
+            _listAPKFiles.remove(index);
+            ProgressManager.getInstance().setApkFiles(_listAPKFiles.toArray(new String[0]));
+        }
 
-        List<String> _listAPKFiles = new ArrayList<String>(Arrays.asList(apkFiles));
-        _listAPKFiles.remove(index);
-        ProgressManager.getInstance().setApkFiles(_listAPKFiles.toArray(new String[0]));
-        
-        // Note: MainActivity.APKFilesOut also needs to be synced if we were using it there, 
-        // but for now we focus on the UI/ProgressManager integration.
+        String[] apkFilesOut = ProgressManager.getInstance().getApkFilesOut();
+        if (apkFilesOut != null && index >= 0 && index < apkFilesOut.length) {
+            List<String> _listAPKFilesOut = new ArrayList<>(Arrays.asList(apkFilesOut));
+            _listAPKFilesOut.remove(index);
+            ProgressManager.getInstance().setApkFilesOut(_listAPKFilesOut.toArray(new String[0]));
+        }
     }
 }

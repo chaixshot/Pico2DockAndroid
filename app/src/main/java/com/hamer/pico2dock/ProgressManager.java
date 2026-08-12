@@ -7,9 +7,11 @@ public class ProgressManager {
     private static ProgressManager instance;
     private final MutableLiveData<ProcessUpdate> updateLiveData = new MutableLiveData<>();
     private final MutableLiveData<String[]> fileListLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String[]> outputFileListLiveData = new MutableLiveData<>();
     
     private ProcessUpdate currentState = new ProcessUpdate(null, 0, null, false, false);
     private String[] apkFiles;
+    private String[] apkFilesOut;
 
     private ProgressManager() {}
 
@@ -73,6 +75,26 @@ public class ProgressManager {
         if (apkFiles != null && index >= 0 && index < apkFiles.length) {
             apkFiles[index] = status;
             fileListLiveData.postValue(apkFiles);
+        }
+    }
+
+    public LiveData<String[]> getOutputFileListLiveData() {
+        return outputFileListLiveData;
+    }
+
+    public void setApkFilesOut(String[] files) {
+        this.apkFilesOut = files;
+        outputFileListLiveData.postValue(files);
+    }
+
+    public String[] getApkFilesOut() {
+        return apkFilesOut;
+    }
+
+    public synchronized void updateOutputFile(int index, String path) {
+        if (apkFilesOut != null && index >= 0 && index < apkFilesOut.length) {
+            apkFilesOut[index] = path;
+            outputFileListLiveData.postValue(apkFilesOut);
         }
     }
 }

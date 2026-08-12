@@ -121,6 +121,9 @@ public class MainWorker extends Worker {
 
         progressManager.reset();
         progressManager.setApkFiles(apkFiles.clone());
+        String[] emptyOut = new String[apkFiles.length];
+        Arrays.fill(emptyOut, "");
+        progressManager.setApkFilesOut(emptyOut);
 
         File keystore = Utils.GetKeystoreFile(getApplicationContext());
 
@@ -170,6 +173,7 @@ public class MainWorker extends Worker {
 
                         task.progressBar.Increase(null);
                         FileviewHelper.ChangeText(task.index, Utils.FileIndicator.Success + " " + task.originalFile);
+                        progressManager.updateOutputFile(task.index, task.dirApkOut.getPath());
                     } catch (Exception error) {
                         if (isStopped()) break;
                         Log.e("Pico2Dock", "Signing error", error);

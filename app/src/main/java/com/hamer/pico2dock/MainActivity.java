@@ -181,6 +181,13 @@ public class MainActivity extends AppCompatActivity {
                 FileviewHelper.Apply(MainActivity.this, files);
             }
         });
+
+        ProgressManager.getInstance().getOutputFileListLiveData().observe(this, new Observer<String[]>() {
+            @Override
+            public void onChanged(String[] files) {
+                APKFilesOut = files;
+            }
+        });
     }
 
     @Override
@@ -285,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
         APKFilesOut = new String[]{};
 
         ProgressManager.getInstance().setApkFiles(APKFiles);
+        ProgressManager.getInstance().setApkFilesOut(APKFilesOut);
 
         ChangeButtonState();
     }
