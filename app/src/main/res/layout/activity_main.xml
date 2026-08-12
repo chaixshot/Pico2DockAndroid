@@ -92,20 +92,41 @@
                             android:layout_width="fill_parent"
                             android:layout_height="match_parent">
 
-                            <Button
-                                android:id="@+id/ButtonHelp"
-                                android:layout_width="25dp"
-                                android:layout_height="33dp"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_gravity="end"
-                                android:onClick="ButtonHelpOpen"
-                                android:paddingLeft="-10dp"
-                                android:paddingTop="-10dp"
-                                android:paddingRight="-10dp"
-                                android:paddingBottom="-10dp"
-                                android:text="\?"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:tooltipText="@string/help_message" />
+                                android:orientation="horizontal">
+
+                                <Button
+                                    android:id="@+id/ButtonLanguage"
+                                    android:layout_width="25dp"
+                                    android:layout_height="33dp"
+                                    android:onClick="ButtonLanguagePickerOpen"
+                                    android:paddingLeft="0dp"
+                                    android:paddingTop="0dp"
+                                    android:paddingRight="0dp"
+                                    android:paddingBottom="5dp"
+                                    android:text="🌐"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:tooltipText="@string/language_picker_title" />
+
+                                <Button
+                                    android:id="@+id/ButtonHelp"
+                                    android:layout_width="25dp"
+                                    android:layout_height="33dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:onClick="ButtonHelpOpen"
+                                    android:paddingLeft="-10dp"
+                                    android:paddingTop="-10dp"
+                                    android:paddingRight="-10dp"
+                                    android:paddingBottom="-10dp"
+                                    android:text="\?"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:tooltipText="@string/help_message" />
+                            </LinearLayout>
                         </FrameLayout>
 
                     </LinearLayout>
@@ -289,20 +310,20 @@
 
                             <Switch
                                 android:id="@+id/SwitchHideDock"
-                                android:paddingTop="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0"
+                                android:paddingTop="10dp"
                                 android:text="@string/hide_dock"
                                 android:tooltipText="@string/hide_dock_tooltip" />
 
                             <Switch
                                 android:id="@+id/FinishSound"
-                                android:checked="true"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="10dp"
                                 android:layout_weight="0"
+                                android:checked="true"
+                                android:paddingTop="10dp"
                                 android:text="@string/finish_sound"
                                 android:tooltipText="@string/finish_sound_tooltip" />
                         </LinearLayout>

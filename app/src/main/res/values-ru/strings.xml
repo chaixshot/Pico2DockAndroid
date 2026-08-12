@@ -56,4 +56,6 @@
     <string name="action_blocked_processing">Невозможно выполнить это действие во время обработки</string>
     <string name="exit_hint">Нажмите еще раз для выхода</string>
     <string name="file_access_error">Нет доступа к файлу \"%1$s\"</string>
+    <string name="language_picker_title">Выберите язык</string>
+    <string name="language_auto">Авто</string>
 </resources>

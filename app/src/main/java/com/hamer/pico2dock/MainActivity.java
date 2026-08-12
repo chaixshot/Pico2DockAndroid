@@ -9,11 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -105,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     String NamePrefix = "";
     boolean IsRename = false;
     boolean IsFinishSound = true;
+    String AppLanguage = "";
 
     boolean IsProcessRunning = false;
     Long DoubleBack = System.currentTimeMillis() - 2000;
@@ -112,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadConfig();
+        applyLanguage(AppLanguage);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -394,14 +401,78 @@ public class MainActivity extends AppCompatActivity {
     private void loadConfig() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         IsFinishSound = sharedPref.getBoolean("FinishSound", true);
-        CheckboxFinishSound.setChecked(IsFinishSound);
+        if (CheckboxFinishSound != null) CheckboxFinishSound.setChecked(IsFinishSound);
+        AppLanguage = sharedPref.getString("AppLanguage", "");
     }
 
     private void saveConfig() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean("FinishSound", CheckboxFinishSound.isChecked());
+        editor.putString("AppLanguage", AppLanguage);
         editor.apply();
+    }
+
+    private void applyLanguage(String languageCode) {
+        if (languageCode == null || languageCode.isEmpty()) {
+            return;
+        }
+        Locale locale;
+        if (languageCode.contains("-")) {
+            String[] parts = languageCode.split("-");
+            if (parts[1].startsWith("r")) {
+                parts[1] = parts[1].substring(1);
+            }
+            locale = new Locale(parts[0], parts[1]);
+        } else {
+            locale = new Locale(languageCode);
+        }
+        Locale.setDefault(locale);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.setLocale(locale);
+        res.updateConfiguration(conf, dm);
+    }
+
+    public void ButtonLanguagePickerOpen(View view) {
+        final String[] languages = {
+                getString(R.string.language_auto),
+                "Čeština (Czech)", "Dansk (Danish)", "Nederlands (Dutch)",
+                "English (United Kingdom)", "English (United States)", "Suomi (Finnish)",
+                "Français (French)", "Deutsch (German)", "Ελληνικά (Greek)",
+                "Italiano (Italian)", "日本語 (Japanese)", "한국어 (Korean)",
+                "Melayu (Malay)", "Norsk bokmål (Norwegian)", "Polski (Polish)",
+                "Português (Portugal)", "Português (Brasil)", "Română (Romanian)",
+                "Русский (Russian)", "Español (Latinoamérica)", "Español (España)",
+                "Svenska (Swedish)", "ไทย (Thai)", "Türkçe (Turkish)",
+                "中文 (简体)", "中文 (繁體)", "中文 (香港)"
+        };
+
+        final String[] codes = {
+                "", "cs", "da", "nl", "en-rGB", "en-rUS", "fi", "fr", "de", "el",
+                "it", "ja", "ko", "ms", "nb", "pl", "pt-rPT", "pt-rBR", "ro",
+                "ru", "es", "es-rES", "sv", "th", "tr", "zh", "zh-rTW", "zh-rHK"
+        };
+
+        int checkedItem = 0;
+        for (int i = 0; i < codes.length; i++) {
+            if (codes[i].equals(AppLanguage)) {
+                checkedItem = i;
+                break;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.language_picker_title);
+        builder.setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
+            AppLanguage = codes[which];
+            saveConfig();
+            dialog.dismiss();
+            recreate();
+        });
+        builder.setNegativeButton(R.string.close_button, (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     //** Permission

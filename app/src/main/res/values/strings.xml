@@ -56,4 +56,6 @@
     <string name="action_blocked_processing">Can\'t do this action while processing</string>
     <string name="exit_hint">Press once again to Exit</string>
     <string name="file_access_error">Can\'t access file \"%1$s\"</string>
+    <string name="language_picker_title">Select Language</string>
+    <string name="language_auto">Auto</string>
 </resources>
