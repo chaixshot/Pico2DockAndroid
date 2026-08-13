@@ -4,15 +4,15 @@
   # Pico2Dock Android
   ### Convert the (X)APK(M, S) file for Pico 4 and Neo 3 to change the application state from Floating Far app to Dashboard Near Dock, similar to File Manager.<br>Allow multitasking while in a full-screen immersive app.
   ### [Desktop Version](https://github.com/chaixshot/Pico2Dock)
-  </div>
+</div>
   
-  ## 🖥️ Application screenshot
-  <image src="Resource/Android_Pico2Dock.png" width="400">
-    
-  ## 👓 VR Headset screenshot
-  <image src="Resource/Screenshot_pl.solidexplorer2.jpeg" width="400"> <image src="Resource/Screenshot_org.mozilla.firefox_beta.jpeg" width="400"> <image src="Resource/Screenshot_com.google.android.apps.translate.jpeg" width="400"> <image src="Resource/Screenshot_app.android.apps.youtube.music.jpeg" width="400">
+## 🖥️ Application screenshot
+<image src="Resource/Android_Pico2Dock.png" width="400">
   
-  ## ⛏️ Prerequisites
+## 👓 VR Headset screenshot
+<image src="Resource/Screenshot_pl.solidexplorer2.jpeg" width="400"> <image src="Resource/Screenshot_org.mozilla.firefox_beta.jpeg" width="400"> <image src="Resource/Screenshot_com.google.android.apps.translate.jpeg" width="400"> <image src="Resource/Screenshot_app.android.apps.youtube.music.jpeg" width="400">
+  
+## ⛏️ Prerequisites
 The file that [Pico 4](https://www.picoxr.com/products/pico4) supported architecture **arm64-v8a**, **armeabi-v7a**, and **armeabi**.\
 It can be **.apk**, **.xapk**, **.apkm**, and **.apks**.
 
