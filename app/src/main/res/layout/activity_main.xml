@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        app:cardBackgroundColor="#ff292929"
+        app:cardBackgroundColor="@color/main_bg"
         app:cardCornerRadius="32dp"
         app:contentPadding="5dp"
         tools:ignore="MissingConstraints">
@@ -28,6 +28,7 @@
                 android:id="@+id/CardBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/card_bg"
                 app:cardCornerRadius="32dp"
                 app:contentPaddingBottom="10dp"
                 app:contentPaddingLeft="24dp"
@@ -197,6 +198,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginTop="5dp"
+                android:backgroundTint="@color/card_bg"
                 app:cardCornerRadius="32dp">
 
                 <ListView
@@ -299,6 +301,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:backgroundTint="@color/card_bg"
                         app:cardCornerRadius="32dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
@@ -333,6 +336,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
+                        android:backgroundTint="@color/card_bg"
                         app:cardCornerRadius="32dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
@@ -367,6 +371,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
+                        android:backgroundTint="@color/card_bg"
                         app:cardCornerRadius="32dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
@@ -411,6 +416,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
+                android:backgroundTint="@color/card_bg"
                 app:cardCornerRadius="32dp">
 
                 <LinearLayout
