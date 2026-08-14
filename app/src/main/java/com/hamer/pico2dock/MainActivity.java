@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             properties.show_hidden_files = false;
 
             FilePickerDialog dialog = new FilePickerDialog(MainActivity.this, properties);
-            dialog.setTitle("Select apk files");
+            dialog.setTitle(R.string.select_file_title);
 
             dialog.setDialogSelectionListener(new DialogSelectionListener() {
                 @Override

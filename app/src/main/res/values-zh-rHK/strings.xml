@@ -59,4 +59,5 @@
     <string name="menu_install">安裝</string>
     <string name="menu_remove">移除</string>
     <string name="menu_delete">刪除</string>
+    <string name="select_file_title">選擇 APK 檔案</string>
 </resources>

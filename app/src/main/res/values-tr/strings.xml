@@ -59,4 +59,5 @@
     <string name="menu_install">Yükle</string>
     <string name="menu_remove">Kaldır</string>
     <string name="menu_delete">Sil</string>
+    <string name="select_file_title">APK dosyalarını seçin</string>
 </resources>

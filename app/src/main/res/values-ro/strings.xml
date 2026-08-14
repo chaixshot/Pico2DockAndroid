@@ -59,4 +59,5 @@
     <string name="menu_install">Instalează</string>
     <string name="menu_remove">Elimină</string>
     <string name="menu_delete">Șterge</string>
+    <string name="select_file_title">Selectați fișierele APK</string>
 </resources>

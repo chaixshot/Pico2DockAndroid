@@ -59,4 +59,5 @@
     <string name="menu_install">Installer</string>
     <string name="menu_remove">Retirer</string>
     <string name="menu_delete">Supprimer</string>
+    <string name="select_file_title">Sélectionner les fichiers APK</string>
 </resources>

@@ -59,4 +59,5 @@
     <string name="menu_install">Pasang</string>
     <string name="menu_remove">Alih keluar</string>
     <string name="menu_delete">Padam</string>
+    <string name="select_file_title">Pilih fail APK</string>
 </resources>

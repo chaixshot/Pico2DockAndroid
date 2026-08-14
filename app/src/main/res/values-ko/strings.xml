@@ -59,4 +59,5 @@
     <string name="menu_install">설치</string>
     <string name="menu_remove">제거</string>
     <string name="menu_delete">삭제</string>
+    <string name="select_file_title">APK 파일 선택</string>
 </resources>

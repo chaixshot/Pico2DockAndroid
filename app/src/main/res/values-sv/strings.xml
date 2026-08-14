@@ -59,4 +59,5 @@
     <string name="menu_install">Installera</string>
     <string name="menu_remove">Ta bort</string>
     <string name="menu_delete">Radera</string>
+    <string name="select_file_title">Välj APK-filer</string>
 </resources>

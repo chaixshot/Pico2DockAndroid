@@ -59,4 +59,5 @@
     <string name="menu_install">Zainstaluj</string>
     <string name="menu_remove">Usuń</string>
     <string name="menu_delete">Skasuj</string>
+    <string name="select_file_title">Wybierz pliki APK</string>
 </resources>
