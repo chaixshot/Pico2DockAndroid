@@ -14,7 +14,7 @@
         android:layout_height="fill_parent"
         app:cardBackgroundColor="@color/main_bg"
         app:cardCornerRadius="32dp"
-        app:contentPadding="5dp"
+        app:contentPadding="10dp"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/card_bg"
-                app:cardCornerRadius="32dp"
+                app:cardCornerRadius="10dp"
                 app:contentPaddingBottom="10dp"
                 app:contentPaddingLeft="24dp"
                 app:contentPaddingRight="24dp"
@@ -97,36 +97,30 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="end"
+                                android:gravity="fill"
                                 android:orientation="horizontal">
 
                                 <Button
                                     android:id="@+id/ButtonLanguage"
-                                    android:layout_width="25dp"
-                                    android:layout_height="33dp"
+                                    android:layout_width="32dp"
+                                    android:layout_height="40dp"
                                     android:onClick="ButtonLanguagePickerOpen"
-                                    android:paddingLeft="0dp"
-                                    android:paddingTop="0dp"
-                                    android:paddingRight="0dp"
-                                    android:paddingBottom="5dp"
-                                    android:text="🌐"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:tooltipText="@string/language_picker_title" />
+                                    android:tooltipText="@string/language_picker_title"
+                                    app:icon="@android:drawable/ic_menu_manage"
+                                    app:iconGravity="textStart"
+                                    app:iconPadding="0dp" />
 
                                 <Button
                                     android:id="@+id/ButtonHelp"
-                                    android:layout_width="25dp"
-                                    android:layout_height="33dp"
+                                    android:layout_width="32dp"
+                                    android:layout_height="40dp"
                                     android:layout_marginLeft="5dp"
                                     android:onClick="ButtonHelpOpen"
-                                    android:paddingLeft="-10dp"
-                                    android:paddingTop="-10dp"
-                                    android:paddingRight="-10dp"
-                                    android:paddingBottom="-10dp"
-                                    android:text="\?"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold"
-                                    android:tooltipText="@string/help_message" />
+                                    android:padding="0dp"
+                                    android:tooltipText="@string/help_message"
+                                    app:icon="@android:drawable/ic_dialog_info"
+                                    app:iconGravity="textStart"
+                                    app:iconPadding="0dp" />
                             </LinearLayout>
                         </FrameLayout>
 
@@ -185,7 +179,8 @@
                                 android:paddingTop="0dp"
                                 android:paddingBottom="0dp"
                                 android:text="@string/github_page"
-                                android:tooltipText="@string/github_tooltip" />
+                                android:tooltipText="@string/github_tooltip"
+                                app:cornerRadius="10dp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -199,7 +194,7 @@
                 android:layout_height="180dp"
                 android:layout_marginTop="5dp"
                 android:backgroundTint="@color/card_bg"
-                app:cardCornerRadius="32dp">
+                app:cardCornerRadius="10dp">
 
                 <ListView
                     android:id="@+id/ListViewFiles"
@@ -245,7 +240,8 @@
                             android:paddingTop="0dp"
                             android:paddingBottom="0dp"
                             android:text="@string/button_start"
-                            android:tooltipText="@string/button_start_tooltip" />
+                            android:tooltipText="@string/button_start_tooltip"
+                            app:cornerRadius="10dp" />
 
                         <Button
                             android:id="@+id/ButtonClear"
@@ -257,7 +253,8 @@
                             android:paddingTop="0dp"
                             android:paddingBottom="0dp"
                             android:text="@string/button_clear"
-                            android:tooltipText="@string/button_clear_tooltip" />
+                            android:tooltipText="@string/button_clear_tooltip"
+                            app:cornerRadius="10dp" />
 
                     </LinearLayout>
 
@@ -276,18 +273,20 @@
                             android:paddingTop="0dp"
                             android:paddingBottom="0dp"
                             android:text="@string/button_cancel"
-                            android:tooltipText="@string/button_cancel_tooltip" />
+                            android:tooltipText="@string/button_cancel_tooltip"
+                            app:cornerRadius="10dp" />
 
                         <Button
                             android:id="@+id/ButtonBattery"
-                            android:layout_width="35dp"
+                            android:layout_width="32dp"
                             android:layout_height="40dp"
                             android:layout_marginLeft="5dp"
                             android:contentDescription="@string/battery_optimization_desc"
                             android:onClick="RequestBatteryOptimization"
-                            android:padding="0dp"
-                            android:text="🔋"
-                            android:tooltipText="@string/battery_optimization_tooltip" />
+                            android:tooltipText="@string/battery_optimization_tooltip"
+                            app:icon="@android:drawable/ic_lock_idle_charging"
+                            app:iconGravity="textStart"
+                            app:iconPadding="0dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -302,7 +301,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:backgroundTint="@color/card_bg"
-                        app:cardCornerRadius="32dp"
+                        app:cardCornerRadius="10dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
 
@@ -337,7 +336,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:backgroundTint="@color/card_bg"
-                        app:cardCornerRadius="32dp"
+                        app:cardCornerRadius="10dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
 
@@ -372,7 +371,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:backgroundTint="@color/card_bg"
-                        app:cardCornerRadius="32dp"
+                        app:cardCornerRadius="10dp"
                         app:contentPaddingLeft="20dp"
                         app:contentPaddingRight="20dp">
 
@@ -417,7 +416,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="5dp"
                 android:backgroundTint="@color/card_bg"
-                app:cardCornerRadius="32dp">
+                app:cardCornerRadius="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -427,9 +426,7 @@
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginTop="-4dp"
-                        android:layout_marginRight="6dp">
+                        android:layout_marginTop="-4dp">
 
                         <ProgressBar
                             android:id="@+id/StatusProgressBar"
