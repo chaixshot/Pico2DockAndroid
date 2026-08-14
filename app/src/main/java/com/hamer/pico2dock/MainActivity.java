@@ -20,6 +20,7 @@ import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -261,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            applyCustomDim(dialog);
             dialog.show();
         });
     }
@@ -472,7 +474,9 @@ public class MainActivity extends AppCompatActivity {
             recreate();
         });
         builder.setNegativeButton(R.string.close_button, (dialog, which) -> dialog.dismiss());
-        builder.show();
+        AlertDialog alert = builder.create();
+        applyCustomDim(alert);
+        alert.show();
     }
 
     //** Permission
@@ -586,6 +590,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         AlertDialog alert = builder.create();
+        applyCustomDim(alert);
         alert.show();
 
         return super.onContextItemSelected(item);
@@ -602,6 +607,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
         AlertDialog alert = builder.create();
+        applyCustomDim(alert);
         alert.show();
+    }
+
+    private void applyCustomDim(android.app.Dialog dialog) {
+        View dimOverlay = findViewById(R.id.DimOverlay);
+        if (dimOverlay != null) {
+            dimOverlay.bringToFront();
+            dimOverlay.setVisibility(VISIBLE);
+        }
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+        dialog.setOnDismissListener(d -> {
+            if (dimOverlay != null) {
+                dimOverlay.setVisibility(View.GONE);
+            }
+        });
     }
 }
