@@ -5,6 +5,8 @@
   ### Convert the (X)APK(M, S) file for Pico 4 and Neo 3 to change the application state from Floating Far app to Dashboard Near Dock, similar to File Manager.<br>Allow multitasking while in a full-screen immersive app.
   ### [Desktop Version](https://github.com/chaixshot/Pico2Dock)
 </div>
+
+>### ⚠️ If your Pico 4 is [rooted](https://pico4.wiki/guides/root/01-root/), try [PICO 2D Resolution](https://github.com/hhhbwc/pico-resfix) Lsposed module instead.
   
 ## 🖥️ Application screenshot
 <image src="Resource/Android_Pico2Dock.png" width="400">
