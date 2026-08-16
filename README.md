@@ -2,6 +2,8 @@
   <img src="Resource/icon.ico" width="128" height="128"/>
   
   # Pico2Dock Android
+  [English](README.md) | [中文](README_zh.md) | [Русский](README_ru.md)
+  
   ### Convert the (X)APK(M, S) file for Pico 4 and Neo 3 to change the application state from Floating Far app to Dashboard Near Dock, similar to File Manager.<br>Allow multitasking while in a full-screen immersive app.
   ### [Desktop Version](https://github.com/chaixshot/Pico2Dock)
 </div>
