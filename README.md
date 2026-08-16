@@ -9,7 +9,7 @@
 >### ⚠️ If your Pico 4 is [rooted](https://pico4.wiki/guides/root/01-root/), try [PICO 2D Resolution](https://github.com/hhhbwc/pico-resfix) Lsposed module instead.
   
 ## 🖥️ Application screenshot
-<image src="Resource/Android_Pico2Dock.png" width="400">
+<image src="Resource/Android_Pico2Dock.jpeg" width="400">
   
 ## 👓 VR Headset screenshot
 <image src="Resource/Screenshot_pl.solidexplorer2.jpeg" width="400"> <image src="Resource/Screenshot_org.mozilla.firefox_beta.jpeg" width="400"> <image src="Resource/Screenshot_com.google.android.apps.translate.jpeg" width="400"> <image src="Resource/Screenshot_app.android.apps.youtube.music.jpeg" width="400">
