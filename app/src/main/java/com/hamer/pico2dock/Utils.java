@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 
@@ -121,6 +122,53 @@ public class Utils {
 
         public static String ClearTag(String text) {
             return text.replaceAll("(" + Utils.FileIndicator.Working + "|" + Utils.FileIndicator.Success + ")\\s", "");
+        }
+    }
+
+    public static void triggerHaptic(Context context, View view, boolean isHover, int deviceId) {
+        float amplitude = isHover ? 120f : 255f;
+        float frequency = isHover ? 177f : 100f;
+        float duration = isHover ? 10f : 35f;
+
+        int nativeDeviceId;
+        if (deviceId == 100001 || deviceId == 1) {
+            nativeDeviceId = 1;
+        } else if (deviceId == 100002 || deviceId == 2) {
+            nativeDeviceId = 2;
+        } else {
+            nativeDeviceId = 2;
+        }
+
+        try {
+            if (com.bytedance.osui.utils.OSUIHelper.isLoaded) {
+                int res = com.bytedance.osui.utils.OSUIHelper.a(nativeDeviceId, amplitude, frequency, duration);
+                Log.d("PicoHaptic", "OSUIHelper.a result for nativeDeviceId " + nativeDeviceId + " (devId " + deviceId + "): " + res);
+            } else {
+                Log.w("PicoHaptic", "OSUIHelper is not loaded");
+            }
+        } catch (Throwable t) {
+            Log.e("PicoHaptic", "Error calling OSUIHelper.a", t);
+        }
+    }
+
+    public static void applyHaptic(View view) {
+        if (view == null) return;
+        view.setOnHoverListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_HOVER_ENTER) {
+                triggerHaptic(v.getContext(), v, true, event.getDeviceId());
+            }
+            return false;
+        });
+    }
+
+    public static void applyHapticRecursive(View view) {
+        if (view == null) return;
+        applyHaptic(view);
+        if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup vg = (android.view.ViewGroup) view;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                applyHapticRecursive(vg.getChildAt(i));
+            }
         }
     }
 }

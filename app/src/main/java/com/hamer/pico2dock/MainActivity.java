@@ -4,6 +4,7 @@ import static android.view.View.VISIBLE;
 
 import static androidx.core.content.FileProvider.getUriForFile;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -153,6 +155,47 @@ public class MainActivity extends AppCompatActivity {
         ChangeButtonState();
 
         setupObservers();
+
+        applyHoverHaptic(ButtonStart);
+        applyHoverHaptic(ButtonCancel);
+        applyHoverHaptic(ButtonClear);
+        applyHoverHaptic(ButtonBattery);
+        applyHoverHaptic(findViewById(R.id.ButtonLanguage));
+        applyHoverHaptic(findViewById(R.id.ButtonHelp));
+        applyHoverHaptic(findViewById(R.id.button));
+        applyHoverHaptic(SwtichHideDock);
+        applyHoverHaptic(CheckboxRePackage);
+        applyHoverHaptic(CheckboxRePackageAdv);
+        applyHoverHaptic(CheckboxRename);
+        applyHoverHaptic(CheckboxFinishSound);
+        applyHoverHaptic(findViewById(R.id.CardBanner));
+        applyHoverHaptic(findViewById(R.id.CardFiles));
+
+        SwtichHideDock.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()) {
+                triggerBothOrDevice(MainActivity.this, buttonView, false, lastDeviceId);
+            }
+        });
+        CheckboxRePackage.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()) {
+                triggerBothOrDevice(MainActivity.this, buttonView, false, lastDeviceId);
+            }
+        });
+        CheckboxRePackageAdv.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()) {
+                triggerBothOrDevice(MainActivity.this, buttonView, false, lastDeviceId);
+            }
+        });
+        CheckboxRename.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()) {
+                triggerBothOrDevice(MainActivity.this, buttonView, false, lastDeviceId);
+            }
+        });
+        CheckboxFinishSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()) {
+                triggerBothOrDevice(MainActivity.this, buttonView, false, lastDeviceId);
+            }
+        });
     }
 
     private void setupObservers() {
@@ -228,6 +271,43 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private static int lastDeviceId = 0;
+
+    private void triggerBothOrDevice(Context context, View view, boolean isHover, int deviceId) {
+        if (deviceId != 0) {
+            lastDeviceId = deviceId;
+        }
+        int effectiveId = (deviceId != 0) ? deviceId : lastDeviceId;
+        android.util.Log.d("PicoHapticDebug", "triggerBothOrDevice -> deviceId: " + deviceId + ", lastDeviceId: " + lastDeviceId + ", effectiveId: " + effectiveId + ", isHover: " + isHover);
+
+        if (effectiveId > 0) {
+            if (effectiveId % 2 != 0) {
+                Utils.triggerHaptic(context, view, isHover, 1);
+            } else {
+                Utils.triggerHaptic(context, view, isHover, 2);
+            }
+        } else {
+            Utils.triggerHaptic(context, view, isHover, 1);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void applyHoverHaptic(View view) {
+        if (view == null) return;
+        view.setOnHoverListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                triggerBothOrDevice(MainActivity.this, v, true, event.getDeviceId());
+            }
+            return false;
+        });
+        view.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                triggerBothOrDevice(MainActivity.this, v, false, event.getDeviceId());
+            }
+            return false;
+        });
     }
 
     public static MainActivity getInstance() {
